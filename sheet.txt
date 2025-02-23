@@ -1,0 +1,7 @@
+Rank	Name	Point	Achievements
+🥇 1	Ei Shwe	200	Master Coder 🏆
+🥈 2	Aung Hla	130	Advanced Coder 🚀
+🥉 3	Mg Mg	120	Advanced Coder 🚀
+⭐ 4	   Hla Aung	100	Advanced Coder 🚀
+⭐ 5    Myo Myo	96	Beginner Coder 👨‍💻
+⭐ 6	   Zaw Lin	91	Beginner Coder 👨‍💻
