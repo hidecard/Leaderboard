@@ -25,7 +25,7 @@
     
     <script>
         function fetchLeaderboard() {
-            fetch("https://script.google.com/macros/s/AKfycbzM_37pu2Cuk1Hpwo9pkASRNzwZDqK2F8_oQufLFGSAcH0DjKtJs_qQRPULfxkcm3MPjg/exec")
+            fetch("./data.json")
                 .then(response => response.json())
                 .then(data => {
                     const tbody = document.getElementById("leaderboard-body");

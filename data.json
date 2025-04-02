@@ -1,0 +1,38 @@
+[
+    {
+      "rank": "🥇 1",
+      "name": "Hla Aung",
+      "points": 230,
+      "achievements": "Master Coder 🏆"
+    },
+    {
+      "rank": "🥈 2",
+      "name": "Ei Shwe",
+      "points": 200,
+      "achievements": "Master Coder 🏆"
+    },
+    {
+      "rank": "🥉 3",
+      "name": "Myo Myo",
+      "points": 150,
+      "achievements": "Advanced Coder 🚀"
+    },
+    {
+      "rank": "⭐ 4",
+      "name": "Zaw Lin",
+      "points": 140,
+      "achievements": "Advanced Coder 🚀"
+    },
+    {
+      "rank": "⭐ 5",
+      "name": "Aung Hla",
+      "points": 130,
+      "achievements": "Advanced Coder 🚀"
+    },
+    {
+      "rank": "⭐ 6",
+      "name": "Mg Mg",
+      "points": 120,
+      "achievements": "Advanced Coder 🚀"
+    }
+  ]
