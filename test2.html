@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="leaderboard">
+        <h2><i class="fa-solid fa-terminal"></i> YHA Coder Leaderboard</h2>
+        <table class="table text-center">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Points</th>
+                    <th>Achievements</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                <tr><td colspan="4">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+        function fetchLeaderboard() {
+            fetch("https://script.google.com/macros/s/AKfycbzM_37pu2Cuk1Hpwo9pkASRNzwZDqK2F8_oQufLFGSAcH0DjKtJs_qQRPULfxkcm3MPjg/exec")
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById("leaderboard-body");
+                    tbody.innerHTML = "";
+                    
+                    if (data && Array.isArray(data)) {
+                        if (data.length > 0) {
+                            for (let i = 0; i < data.length; i++) {
+                                let row = document.createElement("tr");
+                                row.innerHTML = `
+                                    <td><span class="rank-badge">${data[i].rank}</span></td>
+                                    <td><span class="name">${data[i].name}</span></td>
+                                    <td><span class="points">${data[i].points}</span></td>
+                                    <td><span class="achievements">${data[i].achievements}</span></td>
+                                `;
+                                tbody.appendChild(row);
+                            }
+                        } else {
+                            tbody.innerHTML = "<tr><td colspan='4'>No data available.</td></tr>";
+                        }
+                    } else {
+                        tbody.innerHTML = "<tr><td colspan='4'>Invalid data format.</td></tr>";
+                    }
+                })
+                .catch(error => {
+                    const tbody = document.getElementById("leaderboard-body");
+                    tbody.innerHTML = "<tr><td colspan='4'>Failed to load data.</td></tr>";
+                });
+        }
+
+        document.addEventListener("DOMContentLoaded", fetchLeaderboard);
+    </script>
+</body>
+</html>
