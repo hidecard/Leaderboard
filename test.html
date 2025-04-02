@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <div class="leaderboard">
@@ -25,29 +26,31 @@
     
     <script>
         function fetchLeaderboard() {
-            fetch("https://script.google.com/macros/s/AKfycbzM_37pu2Cuk1Hpwo9pkASRNzwZDqK2F8_oQufLFGSAcH0DjKtJs_qQRPULfxkcm3MPjg/exec")
-                .then(response => response.json())
-                .then(data => {
-                    const tbody = document.getElementById("leaderboard-body");
-                    tbody.innerHTML = "";
-                    
-                    for (let i = 0; i < data.length; i++) {
-                        let row = document.createElement("tr");
-                        row.innerHTML = `
-                            <td><span class="rank-badge">${data[i].rank}</span></td>
-                            <td><span class="name">${data[i].name}</span></td>
-                            <td><span class="points">${data[i].points}</span></td>
-                            <td><span class="achievements">${data[i].achievements}</span></td>
-                        `;
-                        tbody.appendChild(row);
-                    }
-                })
-                .catch(() => {
-                    document.getElementById("leaderboard-body").innerHTML = "<tr><td colspan='4'>Failed to load data.</td></tr>";
-                });
+            $.ajax({
+                url: "https://script.google.com/macros/s/AKfycbzM_37pu2Cuk1Hpwo9pkASRNzwZDqK2F8_oQufLFGSAcH0DjKtJs_qQRPULfxkcm3MPjg/exec",
+                method: "GET",
+                dataType: "json",
+                success: function(data) {
+                    let html = "";
+                    data.forEach(player => {
+                        html += `<tr>
+                            <td><span class="rank-badge">${player.rank}</span></td>
+                            <td><span class="name">${player.name}</span></td>
+                            <td><span class="points">${player.points}</span></td>
+                            <td><span class="achievements">${player.achievements}</span></td>
+                        </tr>`;
+                    });
+                    $("#leaderboard-body").html(html);
+                },
+                error: function() {
+                    $("#leaderboard-body").html("<tr><td colspan='4'>Failed to load data.</td></tr>");
+                }
+            });
         }
 
-        document.addEventListener("DOMContentLoaded", fetchLeaderboard);
+        $(document).ready(function() {
+            fetchLeaderboard();
+        });
     </script>
 </body>
 </html>
