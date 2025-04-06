@@ -7,13 +7,27 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary-orange: #ff6200;
+            --light-orange: #ff8c00;
+            --gold: #ffd700;
+            --dark-bg: #2b1a0d;
+            --darker-bg: #3b261b;
+        }
+
         body {
-            background: radial-gradient(circle at center, #2b1a0d 0%, #3b261b 100%);
+            background: radial-gradient(circle at center, var(--dark-bg) 0%, var(--darker-bg) 100%);
             font-family: 'Orbitron', sans-serif;
             color: #ffffff;
             min-height: 100vh;
             overflow-x: hidden;
             margin: 0;
+            transition: all 0.3s ease;
+        }
+
+        body.light-mode {
+            background: radial-gradient(circle at center, #f5f5f5 0%, #e0e0e0 100%);
+            color: #333;
         }
 
         @keyframes scanline {
@@ -30,8 +44,16 @@
             padding: 25px;
             position: relative;
             overflow: hidden;
-            border: 2px solid #ff6200;
+            border: 2px solid var(--primary-orange);
             box-shadow: 0 0 25px rgba(255, 98, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .light-mode .leaderboard {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border-color: var(--light-orange);
+            box-shadow: 0 0 25px rgba(255, 140, 0, 0.2);
         }
 
         .leaderboard::before {
@@ -47,12 +69,18 @@
 
         h2 {
             text-align: center;
-            color: #ff6200;
+            color: var(--primary-orange);
             text-transform: uppercase;
             letter-spacing: 2px;
             font-size: clamp(1.5rem, 5vw, 2.5rem);
             text-shadow: 0 0 10px rgba(255, 98, 0, 0.7);
             margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .light-mode h2 {
+            color: var(--light-orange);
+            text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
         }
 
         h2 i {
@@ -73,7 +101,7 @@
         }
 
         thead th {
-            background: linear-gradient(90deg, #ff6200, #ff8c00);
+            background: linear-gradient(90deg, var(--primary-orange), var(--light-orange));
             color: #fff;
             padding: 12px;
             font-weight: 700;
@@ -81,18 +109,40 @@
             letter-spacing: 1px;
             border: none;
             font-size: clamp(0.8rem, 2.5vw, 1rem);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .light-mode thead th {
+            background: linear-gradient(90deg, var(--light-orange), #ffa500);
         }
 
         tbody tr {
             background: rgba(255, 255, 255, 0.05);
             transition: all 0.3s ease;
             border-bottom: 1px solid rgba(255, 98, 0, 0.2);
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .light-mode tbody tr {
+            background: rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(255, 140, 0, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         tbody tr:hover {
             background: rgba(255, 98, 0, 0.2);
             transform: scale(1.01);
             box-shadow: 0 0 10px rgba(255, 98, 0, 0.4);
+        }
+
+        .light-mode tbody tr:hover {
+            background: rgba(255, 140, 0, 0.2);
         }
 
         td {
@@ -103,7 +153,7 @@
         }
 
         .rank-badge {
-            background: linear-gradient(45deg, #ff8c00, #ff6200);
+            background: linear-gradient(45deg, var(--light-orange), var(--primary-orange));
             color: #fff;
             border-radius: 50%;
             width: clamp(30px, 5vw, 40px);
@@ -116,14 +166,89 @@
             animation: glow 1.5s infinite alternate;
         }
 
+        .light-mode .rank-badge {
+            box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+        }
+
         @keyframes glow {
             from { box-shadow: 0 0 5px rgba(255, 98, 0, 0.5); }
             to { box-shadow: 0 0 15px rgba(255, 98, 0, 0.8); }
         }
 
-        .name { color: #ff8c00; font-weight: 600; }
-        .points { color: #ffd700; font-size: clamp(1rem, 3vw, 1.2rem); font-weight: bold; }
-        .achievements { color: #ffab40; font-style: italic; }
+        .name { 
+            color: var(--light-orange); 
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .name:hover {
+            text-decoration: underline;
+        }
+        .light-mode .name { color: #e67e22; }
+
+        .points { 
+            color: var(--gold); 
+            font-size: clamp(1rem, 3vw, 1.2rem); 
+            font-weight: bold; 
+        }
+        .light-mode .points { color: #d35400; }
+
+        .achievements { 
+            color: #ffab40; 
+            font-style: italic; 
+        }
+        .light-mode .achievements { color: #e67e22; }
+
+        .badge {
+            display: inline-block;
+            margin: 2px;
+            padding: 3px 6px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .badge-gold { background: linear-gradient(45deg, #FFD700, #FFA500); }
+        .badge-silver { background: linear-gradient(45deg, #C0C0C0, #A0A0A0); }
+        .badge-bronze { background: linear-gradient(45deg, #CD7F32, #A0522D); }
+        .badge-blue { background: linear-gradient(45deg, #3498db, #2980b9); }
+
+        .progress {
+            height: 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .light-mode .progress {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--light-orange), var(--primary-orange));
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-orange {
+            background: linear-gradient(90deg, var(--primary-orange), var(--light-orange));
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-orange:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 98, 0, 0.4);
+        }
+
+        .border-orange {
+            border-color: var(--primary-orange) !important;
+        }
 
         /* Responsive Design */
         @media (max-width: 992px) {
@@ -182,14 +307,38 @@
 </head>
 <body>
 <div class="leaderboard">
-    <h2><i class="fa-solid fa-terminal"></i> YHA Coder Leaderboard</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0"><i class="fa-solid fa-terminal"></i> YHA Coder Leaderboard</h2>
+        <div>
+            <button id="theme-toggle" class="btn btn-sm btn-orange me-2" title="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button id="refresh-btn" class="btn btn-sm btn-orange me-2" title="Refresh data">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+            <button id="export-btn" class="btn btn-sm btn-success" title="Export to CSV">
+                <i class="fas fa-file-export"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="search-box mb-3">
+        <div class="input-group">
+            <span class="input-group-text bg-dark text-light">
+                <i class="fas fa-search"></i>
+            </span>
+            <input type="text" id="search-input" class="form-control bg-dark text-light" 
+                   placeholder="Search by name...">
+        </div>
+    </div>
+
     <table class="table text-center">
         <thead>
             <tr>
-                <th>Rank</th>
-                <th>Name</th>
-                <th>Points</th>
-                <th>Achievements</th>
+                <th data-sort="rank">Rank <i class="fas fa-sort"></i></th>
+                <th data-sort="name">Name <i class="fas fa-sort"></i></th>
+                <th data-sort="points">Points <i class="fas fa-sort"></i></th>
+                <th data-sort="achievements">Achievements <i class="fas fa-sort"></i></th>
             </tr>
         </thead>
         <tbody id="leaderboard-body">
@@ -202,31 +351,318 @@
     </table>
 </div>
 
+<!-- User Profile Modal -->
+<div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header border-orange">
+                <h5 class="modal-title" id="userModalTitle">User Profile</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="user-details" class="text-center">
+                    <div class="spinner-border text-orange" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-orange">
+                <button type="button" class="btn btn-orange" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // Global variables
+    let leaderboardData = [];
+    let sortConfig = { column: 'rank', direction: 'asc' };
+    const userModal = new bootstrap.Modal(document.getElementById('userModal'));
+
+    // DOM Content Loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize theme
+        initTheme();
+        
+        // Fetch initial data
+        fetchLeaderboard();
+        
+        // Set up auto-refresh every 30 seconds
+        setInterval(fetchLeaderboard, 30000);
+        
+        // Set up event listeners
+        setupEventListeners();
+    });
+
+    // Initialize theme from localStorage
+    function initTheme() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const isDarkMode = localStorage.getItem('darkMode') !== 'false';
+        
+        if (!isDarkMode) {
+            document.body.classList.add('light-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+    }
+
+    // Set up all event listeners
+    function setupEventListeners() {
+        // Theme toggle
+        document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+        
+        // Refresh button
+        document.getElementById('refresh-btn').addEventListener('click', fetchLeaderboard);
+        
+        // Export button
+        document.getElementById('export-btn').addEventListener('click', exportToCSV);
+        
+        // Search input
+        document.getElementById('search-input').addEventListener('input', filterTable);
+        
+        // Sortable headers
+        document.querySelectorAll('thead th[data-sort]').forEach(header => {
+            header.addEventListener('click', () => {
+                const column = header.getAttribute('data-sort');
+                sortTable(column);
+            });
+        });
+        
+        // User name click for modal
+        document.getElementById('leaderboard-body').addEventListener('click', function(e) {
+            if (e.target.classList.contains('name')) {
+                const userName = e.target.textContent;
+                showUserModal(userName);
+            }
+        });
+    }
+
+    // Toggle between dark and light mode
+    function toggleTheme() {
+        const themeToggle = document.getElementById('theme-toggle');
+        document.body.classList.toggle('light-mode');
+        
+        if (document.body.classList.contains('light-mode')) {
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            localStorage.setItem('darkMode', 'false');
+        } else {
+            themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            localStorage.setItem('darkMode', 'true');
+        }
+    }
+
+    // Fetch leaderboard data
     async function fetchLeaderboard() {
         try {
+            document.getElementById('leaderboard-body').innerHTML = `
+                <tr><td colspan="4" class="text-center">
+                    <div class="spinner-border text-orange" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </td></tr>`;
+            
             const response = await fetch("https://script.google.com/macros/s/AKfycbzM_37pu2Cuk1Hpwo9pkASRNzwZDqK2F8_oQufLFGSAcH0DjKtJs_qQRPULfxkcm3MPjg/exec");
+            
             if (!response.ok) throw new Error('Network response was not ok');
-            const data = await response.json();
-
-            let html = "";
-            data.forEach(player => {
-                html += `<tr>
-                    <td><span class="rank-badge">${player.rank}</span></td>
-                    <td><span class="name">${player.name}</span></td>
-                    <td><span class="points">${player.points}</span></td>
-                    <td><span class="achievements">${player.achievements}</span></td>
-                </tr>`;
-            });
-
-            document.getElementById("leaderboard-body").innerHTML = html;
+            
+            leaderboardData = await response.json();
+            renderTable(leaderboardData);
+            
         } catch (error) {
-            document.getElementById("leaderboard-body").innerHTML = `<tr><td colspan="4">Failed to load leaderboard data. Please try again later.</td></tr>`;
+            document.getElementById('leaderboard-body').innerHTML = `
+                <tr><td colspan="4" class="text-center text-danger">
+                    Failed to load leaderboard data. Please try again later.
+                    <button class="btn btn-sm btn-orange mt-2" onclick="fetchLeaderboard()">
+                        <i class="fas fa-sync-alt"></i> Retry
+                    </button>
+                </td></tr>`;
             console.error('Error fetching leaderboard:', error);
         }
     }
 
-    fetchLeaderboard();
+    // Render table with data
+    function renderTable(data) {
+        let html = "";
+        
+        data.forEach((player, index) => {
+            // Add animation delay based on index
+            const animationDelay = `${index * 0.1}s`;
+            
+            // Format achievements with badges
+            const achievements = formatAchievements(player.achievements);
+            
+            // Calculate points percentage for progress bar
+            const maxPoints = Math.max(...data.map(p => parseInt(p.points))) || 100;
+            const pointsPercentage = (parseInt(player.points) / maxPoints) * 100;
+            
+            html += `<tr style="animation-delay: ${animationDelay}">
+                <td><span class="rank-badge">${player.rank}</span></td>
+                <td><span class="name">${player.name}</span></td>
+                <td>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <span class="points me-2">${player.points}</span>
+                        <div class="progress" style="width: 100px;">
+                            <div class="progress-bar" style="width: ${pointsPercentage}%">
+                                ${player.points}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td><span class="achievements">${achievements}</span></td>
+            </tr>`;
+        });
+        
+        document.getElementById('leaderboard-body').innerHTML = html;
+    }
+
+    // Format achievements with badges
+    function formatAchievements(achievements) {
+        if (!achievements) return 'None';
+        
+        // Split by comma and create badges
+        return achievements.split(',').map(ach => {
+            ach = ach.trim();
+            let badgeClass = 'badge-blue';
+            
+            if (ach.includes('Gold')) badgeClass = 'badge-gold';
+            else if (ach.includes('Silver')) badgeClass = 'badge-silver';
+            else if (ach.includes('Bronze')) badgeClass = 'badge-bronze';
+            
+            return `<span class="badge ${badgeClass}">${ach}</span>`;
+        }).join(' ');
+    }
+
+    // Sort table by column
+    function sortTable(column) {
+        // Update sort config
+        if (sortConfig.column === column) {
+            sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+            sortConfig.column = column;
+            sortConfig.direction = 'asc';
+        }
+        
+        // Update sort indicators
+        document.querySelectorAll('thead th i').forEach(icon => {
+            icon.className = 'fas fa-sort';
+        });
+        
+        const currentHeader = document.querySelector(`th[data-sort="${column}"]`);
+        const sortIcon = currentHeader.querySelector('i');
+        sortIcon.className = sortConfig.direction === 'asc' 
+            ? 'fas fa-sort-up' 
+            : 'fas fa-sort-down';
+        
+        // Sort the data
+        const sortedData = [...leaderboardData].sort((a, b) => {
+            let valueA = a[column];
+            let valueB = b[column];
+            
+            // Handle numeric sorting for rank and points
+            if (column === 'rank' || column === 'points') {
+                valueA = parseInt(valueA);
+                valueB = parseInt(valueB);
+            }
+            
+            // Handle string sorting for name and achievements
+            if (typeof valueA === 'string') valueA = valueA.toLowerCase();
+            if (typeof valueB === 'string') valueB = valueB.toLowerCase();
+            
+            if (valueA < valueB) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (valueA > valueB) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+        
+        renderTable(sortedData);
+    }
+
+    // Filter table based on search input
+    function filterTable() {
+        const searchTerm = document.getElementById('search-input').value.toLowerCase();
+        const rows = document.querySelectorAll('#leaderboard-body tr');
+        
+        rows.forEach(row => {
+            const name = row.querySelector('.name')?.textContent.toLowerCase() || '';
+            row.style.display = name.includes(searchTerm) ? '' : 'none';
+        });
+    }
+
+    // Show user modal
+    function showUserModal(userName) {
+        const user = leaderboardData.find(u => u.name === userName);
+        if (!user) return;
+        
+        document.getElementById('userModalTitle').textContent = `${userName}'s Profile`;
+        
+        // Format user details
+        const userDetails = `
+            <div class="mb-3">
+                <div class="rank-badge mx-auto mb-2" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                    ${user.rank}
+                </div>
+                <h4 class="text-orange">${userName}</h4>
+            </div>
+            
+            <div class="row text-start">
+                <div class="col-md-6 mb-2">
+                    <strong><i class="fas fa-star me-2"></i>Points:</strong> 
+                    <span class="points">${user.points}</span>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <strong><i class="fas fa-trophy me-2"></i>Achievements:</strong>
+                    <div class="mt-1">${formatAchievements(user.achievements)}</div>
+                </div>
+            </div>
+            
+            <div class="mt-3">
+                <h5 class="text-orange">Progress</h5>
+                <div class="progress mb-2" style="height: 25px;">
+                    <div class="progress-bar" style="width: ${(parseInt(user.points) / 100) * 100}%">
+                        ${user.points} Points
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('user-details').innerHTML = userDetails;
+        userModal.show();
+    }
+
+    // Export to CSV
+    function exportToCSV() {
+        if (!leaderboardData.length) return;
+        
+        const headers = ['Rank', 'Name', 'Points', 'Achievements'];
+        const csvRows = [];
+        
+        // Add header row
+        csvRows.push(headers.join(','));
+        
+        // Add data rows
+        leaderboardData.forEach(user => {
+            const row = [
+                user.rank,
+                `"${user.name}"`,
+                user.points,
+                `"${user.achievements || ''}"`
+            ];
+            csvRows.push(row.join(','));
+        });
+        
+        // Create CSV and download
+        const csvContent = csvRows.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'yha_coder_leaderboard.csv');
+        link.style.visibility = 'hidden';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 </script>
 </body>
 </html>
