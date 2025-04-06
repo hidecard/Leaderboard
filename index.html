@@ -30,7 +30,7 @@
             padding: 25px;
             position: relative;
             overflow: hidden;
-            border: 2px solid #ff6200;
+            border: 2px solid #ff6200; /* Orange border */
             box-shadow: 0 0 25px rgba(255, 98, 0, 0.3);
         }
 
@@ -41,13 +41,13 @@
             left: 0;
             width: 100%;
             height: 2px;
-            background: rgba(255, 98, 0, 0.5);
+            background: rgba(255, 98, 0, 0.5); /* Orange scanline */
             animation: scanline 8s linear infinite;
         }
 
         h2 {
             text-align: center;
-            color: #ff6200;
+            color: #ff6200; /* Orange title */
             text-transform: uppercase;
             letter-spacing: 2px;
             font-size: clamp(1.5rem, 5vw, 2.5rem);
@@ -73,7 +73,7 @@
         }
 
         thead th {
-            background: linear-gradient(90deg, #ff6200, #ff8c00);
+            background: linear-gradient(90deg, #ff6200, #ff8c00); /* Orange gradient */
             color: #fff;
             padding: 12px;
             font-weight: 700;
@@ -90,7 +90,7 @@
         }
 
         tbody tr:hover {
-            background: rgba(255, 98, 0, 0.2);
+            background: rgba(255, 98, 0, 0.2); /* Orange hover */
             transform: scale(1.01);
             box-shadow: 0 0 10px rgba(255, 98, 0, 0.4);
         }
@@ -103,7 +103,7 @@
         }
 
         .rank-badge {
-            background: linear-gradient(45deg, #ff8c00, #ff6200);
+            background: linear-gradient(45deg, #ff8c00, #ff6200); /* Orange gradient */
             color: #fff;
             border-radius: 50%;
             width: clamp(30px, 5vw, 40px);
@@ -121,233 +121,88 @@
             to { box-shadow: 0 0 15px rgba(255, 98, 0, 0.8); }
         }
 
-        .name { color: #ff8c00; font-weight: 600; }
+        .name { color: #ff8c00; font-weight: 600; } /* Lighter orange for names */
         .points { color: #ffd700; font-size: clamp(1rem, 3vw, 1.2rem); font-weight: bold; }
-        .achievements { color: #ffab40; font-style: italic; }
+        .achievements { color: #ffab40; font-style: italic; } /* Softer orange for achievements */
 
+        /* Responsive Design */
         @media (max-width: 992px) {
-            .leaderboard { padding: 20px; }
-            thead th { padding: 10px; }
+            .leaderboard {
+                padding: 20px;
+            }
+            thead th {
+                padding: 10px;
+            }
         }
 
         @media (max-width: 768px) {
-            .leaderboard { margin: 15px; padding: 15px; }
-            td { padding: 8px; }
+            .leaderboard {
+                margin: 15px;
+                padding: 15px;
+            }
+            td {
+                padding: 8px;
+            }
             h2 { margin-bottom: 20px; }
         }
 
         @media (max-width: 576px) {
-            .table { display: block; overflow-x: auto; white-space: nowrap; }
-            thead th, td { min-width: 100px; }
-            .rank-badge { width: 25px; height: 25px; font-size: 0.9rem; }
+            .table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            thead th, td {
+                min-width: 100px;
+            }
+            .rank-badge {
+                width: 25px;
+                height: 25px;
+                font-size: 0.9rem;
+            }
         }
 
+        /* Google Fonts */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
-
-        #auth-container, #post-form {
-            max-width: 400px;
-            margin: 20px auto;
-            padding: 20px;
-            background: rgba(61, 33, 20, 0.8);
-            border-radius: 10px;
-            border: 2px solid #ff6200;
-        }
-        #auth-container input, #post-form input, #post-form textarea {
-            width: 100%;
-            margin: 10px 0;
-            padding: 8px;
-            border-radius: 5px;
-            border: none;
-        }
-        #auth-container button, #post-form button {
-            background: #ff6200;
-            color: #fff;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        #posts-container .post {
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-        }
     </style>
 </head>
 <body>
-    <!-- Authentication Section -->
-    <div id="auth-container">
-        <h2 id="auth-title"><i class="fa-solid fa-user"></i> Login</h2>
-        <input type="text" id="username" placeholder="Username" required>
-        <input type="password" id="password" placeholder="Password" required>
-        <input type="email" id="email" placeholder="Email" style="display: none;">
-        <button id="auth-btn">Login</button>
-        <button id="toggle-auth">Switch to Signup</button>
-    </div>
+<div class="leaderboard">
+    <h2><i class="fa-solid fa-terminal"></i> YHA Coder Leaderboard</h2>
+    <table class="table text-center">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Points</th>
+                <th>Achievements</th>
+            </tr>
+        </thead>
+        <tbody id="leaderboard-body">
+            <tr><td colspan="4">Loading...</td></tr>
+        </tbody>
+    </table>
+</div>
 
-    <!-- Leaderboard Section -->
-    <div class="leaderboard" id="leaderboard-container" style="display: none;">
-        <h2><i class="fa-solid fa-terminal"></i> YHA Coder Leaderboard</h2>
-        <table class="table text-center">
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Name</th>
-                    <th>Points</th>
-                    <th>Achievements</th>
-                </tr>
-            </thead>
-            <tbody id="leaderboard-body">
-                <tr><td colspan="4"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</td></tr>
-            </tbody>
-        </table>
-    </div>
+<script>
+    async function fetchLeaderboard() {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbzM_37pu2Cuk1Hpwo9pkASRNzwZDqK2F8_oQufLFGSAcH0DjKtJs_qQRPULfxkcm3MPjg/exec");
+        const data = await response.json();
 
-    <!-- Posts Section -->
-    <div class="leaderboard" id="posts-container" style="display: none;">
-        <h2><i class="fa-solid fa-newspaper"></i> Posts</h2>
-        <div id="posts-list"></div>
-    </div>
-
-    <!-- Admin Post Creation -->
-    <div id="post-form" style="display: none;">
-        <h2><i class="fa-solid fa-pen"></i> Create Post</h2>
-        <input type="text" id="post-title" placeholder="Post Title" required>
-        <textarea id="post-content" placeholder="Post Content" required></textarea>
-        <button id="submit-post">Submit Post</button>
-    </div>
-
-    <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbx1zSuS7yNtWqNU-E8DQpvLc6Ev9zNaQJ1JW1dMt4O2uywXPa8fmqcD4lbTHWMwBTz4-A/exec";
-        let isLoggedIn = false;
-        let userRole = '';
-        
-        document.getElementById("toggle-auth").addEventListener("click", () => {
-            const emailInput = document.getElementById("email");
-            const authTitle = document.getElementById("auth-title");
-            const authBtn = document.getElementById("auth-btn");
-            
-            if (emailInput.style.display === "none") {
-                emailInput.style.display = "block";
-                authTitle.innerHTML = '<i class="fa-solid fa-user-plus"></i> Signup';
-                authBtn.innerHTML = 'Sign Up';
-                document.getElementById("toggle-auth").innerText = 'Switch to Login';
-            } else {
-                emailInput.style.display = "none";
-                authTitle.innerHTML = '<i class="fa-solid fa-user"></i> Login';
-                authBtn.innerHTML = 'Login';
-                document.getElementById("toggle-auth").innerText = 'Switch to Signup';
-            }
+        let html = "";
+        data.forEach(player => {
+            html += `<tr>
+                <td><span class="rank-badge">${player.rank}</span></td>
+                <td><span class="name">${player.name}</span></td>
+                <td><span class="points">${player.points}</span></td>
+                <td><span class="achievements">${player.achievements}</span></td>
+            </tr>`;
         });
 
-        document.getElementById("auth-btn").addEventListener("click", async () => {
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-            const email = document.getElementById("email").value;
-            const isSignup = document.getElementById("auth-title").innerText.includes("Signup");
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: isSignup ? 'signup' : 'login', username, password, email }),
-                    headers: { "Content-Type": "application/json" }
-                });
-                const data = await response.json();
-                if (data.success) {
-                    isLoggedIn = true;
-                    userRole = data.role;  // "admin" or "user"
-                    document.getElementById("auth-container").style.display = "none";
-                    document.getElementById("leaderboard-container").style.display = "block";
-                    document.getElementById("posts-container").style.display = "block";
-                    if (userRole === "admin") {
-                        document.getElementById("post-form").style.display = "block";
-                    }
-                    fetchLeaderboard();
-                    fetchPosts();
-                } else {
-                    alert(data.message || "Authentication failed.");
-                }
-            } catch (err) {
-                alert("Error connecting to API.");
-                console.error(err);
-            }
-        });
+        document.getElementById("leaderboard-body").innerHTML = html;
+    }
 
-        async function fetchLeaderboard() {
-            try {
-                const response = await fetch(API_URL + "?action=leaderboard");
-                const data = await response.json();
-                const leaderboardBody = document.getElementById("leaderboard-body");
-                leaderboardBody.innerHTML = '';
-                data.forEach((user, index) => {
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
-                        <td class="rank-badge">${index + 1}</td>
-                        <td class="name">${user.username}</td>
-                        <td class="points">${user.points}</td>
-                        <td class="achievements">${user.achievements}</td>
-                    `;
-                    leaderboardBody.appendChild(tr);
-                });
-            } catch (err) {
-                console.error("Error fetching leaderboard:", err);
-            }
-        }
-
-        async function fetchPosts() {
-            try {
-                const response = await fetch(API_URL + "?action=posts");
-                const posts = await response.json();
-                const postsList = document.getElementById("posts-list");
-                postsList.innerHTML = '';
-                posts.forEach(post => {
-                    const postDiv = document.createElement("div");
-                    postDiv.className = "post";
-                    postDiv.innerHTML = `
-                        <h3>${post.title}</h3>
-                        <p>${post.content}</p>
-                        <small>By ${post.author}</small>
-                    `;
-                    postsList.appendChild(postDiv);
-                });
-            } catch (err) {
-                console.error("Error fetching posts:", err);
-            }
-        }
-
-        document.getElementById("submit-post").addEventListener("click", async () => {
-            const title = document.getElementById("post-title").value;
-            const content = document.getElementById("post-content").value;
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'createPost', title, content, author: 'Admin' }),
-                    headers: { "Content-Type": "application/json" }
-                });
-                const data = await response.json();
-                if (data.success) {
-                    fetchPosts();
-                    alert("Post created successfully.");
-                } else {
-                    alert(data.message || "Failed to create post.");
-                }
-            } catch (err) {
-                alert("Error creating post.");
-                console.error(err);
-            }
-        });
-
-        // Load the page and check login state
-        window.onload = function () {
-            if (isLoggedIn) {
-                document.getElementById("auth-container").style.display = "none";
-                document.getElementById("leaderboard-container").style.display = "block";
-                document.getElementById("posts-container").style.display = "block";
-                if (userRole === "admin") {
-                    document.getElementById("post-form").style.display = "block";
-                }
-            }
-        };
-    </script>
+    fetchLeaderboard();
+</script>
 </body>
 </html>
