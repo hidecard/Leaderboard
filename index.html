@@ -20,9 +20,9 @@
             font-family: 'Orbitron', sans-serif;
             color: #ffffff;
             min-height: 100vh;
-            overflow-x: hidden;
             margin: 0;
-            transition: all 0.3s ease;
+            padding: 0;
+            overflow-x: hidden;
         }
 
         body.light-mode {
@@ -30,28 +30,19 @@
             color: #333;
         }
 
-        @keyframes scanline {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
-        }
-
         .leaderboard {
-            max-width: 95%;
-            margin: 30px auto;
+            max-width: 100%;
+            margin: clamp(10px, 3vw, 30px) auto;
             background: rgba(61, 33, 20, 0.8);
             backdrop-filter: blur(10px);
             border-radius: 15px;
-            padding: 25px;
-            position: relative;
-            overflow: hidden;
+            padding: clamp(15px, 3vw, 25px);
             border: 2px solid var(--primary-orange);
             box-shadow: 0 0 25px rgba(255, 98, 0, 0.3);
-            transition: all 0.3s ease;
         }
 
         .light-mode .leaderboard {
             background: rgba(255, 255, 255, 0.9);
-            color: #333;
             border-color: var(--light-orange);
             box-shadow: 0 0 25px rgba(255, 140, 0, 0.2);
         }
@@ -72,10 +63,9 @@
             color: var(--primary-orange);
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-size: clamp(1.2rem, 4vw, 2.5rem);
             text-shadow: 0 0 10px rgba(255, 98, 0, 0.7);
-            margin-bottom: 30px;
-            transition: all 0.3s ease;
+            margin-bottom: clamp(15px, 2vw, 30px);
         }
 
         .light-mode h2 {
@@ -83,56 +73,36 @@
             text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
         }
 
-        h2 i {
-            margin-right: 8px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-
         .table {
-            border: none;
-            background: transparent;
             width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0;
         }
 
         thead th {
             background: linear-gradient(90deg, var(--primary-orange), var(--light-orange));
             color: #fff;
-            padding: 12px;
+            padding: clamp(8px, 1.5vw, 12px);
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
             border: none;
-            font-size: clamp(0.8rem, 2.5vw, 1rem);
+            font-size: clamp(0.7rem, 1.5vw, 1rem);
+            position: sticky;
+            top: 0;
+            z-index: 10;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .light-mode thead th {
-            background: linear-gradient(90deg, var(--light-orange), #ffa500);
         }
 
         tbody tr {
             background: rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
             border-bottom: 1px solid rgba(255, 98, 0, 0.2);
-            animation: fadeIn 0.5s ease forwards;
-            opacity: 0;
+            transition: all 0.3s ease;
         }
 
         .light-mode tbody tr {
             background: rgba(0, 0, 0, 0.05);
             border-bottom: 1px solid rgba(255, 140, 0, 0.2);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         tbody tr:hover {
@@ -141,23 +111,18 @@
             box-shadow: 0 0 10px rgba(255, 98, 0, 0.4);
         }
 
-        .light-mode tbody tr:hover {
-            background: rgba(255, 140, 0, 0.2);
-        }
-
         td {
-            padding: clamp(10px, 2vw, 20px);
+            padding: clamp(6px, 1.5vw, 20px);
             vertical-align: middle;
-            border: none;
-            font-size: clamp(0.8rem, 2.5vw, 1rem);
+            font-size: clamp(0.7rem, 1.5vw, 1rem);
         }
 
         .rank-badge {
             background: linear-gradient(45deg, var(--light-orange), var(--primary-orange));
             color: #fff;
             border-radius: 50%;
-            width: clamp(30px, 5vw, 40px);
-            height: clamp(30px, 5vw, 40px);
+            width: clamp(25px, 4vw, 40px);
+            height: clamp(25px, 4vw, 40px);
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -166,38 +131,21 @@
             animation: glow 1.5s infinite alternate;
         }
 
-        .light-mode .rank-badge {
-            box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
-        }
-
-        @keyframes glow {
-            from { box-shadow: 0 0 5px rgba(255, 98, 0, 0.5); }
-            to { box-shadow: 0 0 15px rgba(255, 98, 0, 0.8); }
-        }
-
-        .name { 
-            color: var(--light-orange); 
+        .name {
+            color: var(--light-orange);
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
         }
-        .name:hover {
-            text-decoration: underline;
-        }
-        .light-mode .name { color: #e67e22; }
 
-        .points { 
-            color: var(--gold); 
-            font-size: clamp(1rem, 3vw, 1.2rem); 
-            font-weight: bold; 
+        .points {
+            color: var(--gold);
+            font-weight: bold;
         }
-        .light-mode .points { color: #d35400; }
 
-        .achievements { 
-            color: #ffab40; 
-            font-style: italic; 
+        .achievements {
+            color: #ffab40;
+            font-style: italic;
         }
-        .light-mode .achievements { color: #e67e22; }
 
         .badge {
             display: inline-block;
@@ -215,23 +163,18 @@
         .badge-blue { background: linear-gradient(45deg, #3498db, #2980b9); }
 
         .progress {
-            height: 20px;
+            height: clamp(15px, 2vw, 20px);
             background-color: rgba(0, 0, 0, 0.2);
             border-radius: 10px;
-        }
-
-        .light-mode .progress {
-            background-color: rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 150px;
+            margin: 0 auto;
         }
 
         .progress-bar {
             background: linear-gradient(90deg, var(--light-orange), var(--primary-orange));
             border-radius: 10px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-size: clamp(0.6rem, 1vw, 0.8rem);
         }
 
         .btn-orange {
@@ -246,62 +189,159 @@
             box-shadow: 0 5px 15px rgba(255, 98, 0, 0.4);
         }
 
-        .border-orange {
-            border-color: var(--primary-orange) !important;
+        .search-box .input-group-text {
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid var(--primary-orange);
         }
 
-        /* Responsive Design */
-        @media (max-width: 992px) {
+        .search-box .form-control {
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid var(--primary-orange);
+        }
+
+        .light-mode .search-box .input-group-text {
+            background: #fff;
+            color: #333;
+            border: 1px solid var(--light-orange);
+        }
+
+        .light-mode .search-box .form-control {
+            background: #fff;
+            color: #333;
+            border: 1px solid var(--light-orange);
+        }
+
+        .table-responsive {
+            max-height: 60vh;
+            overflow-y: hidden;
+        }
+
+        @media (min-width: 769px) {
             .leaderboard {
-                padding: 20px;
+                max-width: 95%;
             }
-            thead th {
-                padding: 10px;
+
+            .table-responsive:hover {
+                overflow-y: auto;
+            }
+
+            .table-responsive::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .table-responsive::-webkit-scrollbar-thumb {
+                background: var(--primary-orange);
+                border-radius: 4px;
+            }
+
+            .table-responsive::-webkit-scrollbar-track {
+                background: rgba(255, 98, 0, 0.1);
             }
         }
 
         @media (max-width: 768px) {
-            .leaderboard {
-                margin: 15px;
-                padding: 15px;
-            }
-            td {
-                padding: 8px;
-            }
-            h2 { margin-bottom: 20px; }
-            .rank-badge {
-                width: 30px;
-                height: 30px;
-                font-size: 1rem;
-            }
-            .table {
-                display: block;
+            .table-responsive {
                 overflow-x: auto;
-                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+                max-height: none;
             }
-            thead th, td {
-                min-width: 120px;
+
+            .table {
+                min-width: 600px;
+            }
+
+            .d-flex {
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
+            }
+
+            .btn-group {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                gap: 5px;
+            }
+
+            .btn {
+                flex: 1;
+                padding: clamp(5px, 1vw, 10px);
+                font-size: clamp(0.7rem, 1.5vw, 1rem);
+            }
+
+            .progress {
+                max-width: 100%;
             }
         }
 
         @media (max-width: 576px) {
-            .leaderboard {
-                padding: 15px;
+            .table {
+                display: block;
+                min-width: unset;
             }
-            .rank-badge {
-                width: 28px;
-                height: 28px;
-                font-size: 0.9rem;
+
+            thead {
+                display: none;
             }
+
+            tbody, tr, td {
+                display: block;
+                width: 100%;
+            }
+
+            tr {
+                margin-bottom: 15px;
+                padding: 10px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 8px;
+                animation: fadeIn 0.5s ease forwards;
+            }
+
             td {
-                padding: 6px;
+                padding: 8px;
+                position: relative;
+                border-bottom: 1px solid rgba(255, 98, 0, 0.2);
             }
-            h2 {
-                font-size: 1.8rem;
+
+            td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                display: block;
+                margin-bottom: 5px;
+                color: var(--light-orange);
+            }
+
+            td:last-child {
+                border-bottom: none;
+            }
+
+            .achievements .badge {
+                color: white;
+            }
+
+            .light-mode .achievements {
+                color: #e67e22;
             }
         }
 
-        /* Google Fonts */
+        /* Animations */
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 5px rgba(255, 98, 0, 0.5); }
+            to { box-shadow: 0 0 15px rgba(255, 98, 0, 0.8); }
+        }
+
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
     </style>
 </head>
@@ -309,11 +349,11 @@
 <div class="leaderboard">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="mb-0"><i class="fa-solid fa-terminal"></i> YHA Coder Leaderboard</h2>
-        <div>
-            <button id="theme-toggle" class="btn btn-sm btn-orange me-2" title="Toggle theme">
+        <div class="btn-group">
+            <button id="theme-toggle" class="btn btn-sm btn-orange" title="Toggle theme">
                 <i class="fas fa-moon"></i>
             </button>
-            <button id="refresh-btn" class="btn btn-sm btn-orange me-2" title="Refresh data">
+            <button id="refresh-btn" class="btn btn-sm btn-orange" title="Refresh data">
                 <i class="fas fa-sync-alt"></i>
             </button>
             <button id="export-btn" class="btn btn-sm btn-success" title="Export to CSV">
@@ -324,31 +364,33 @@
 
     <div class="search-box mb-3">
         <div class="input-group">
-            <span class="input-group-text bg-dark text-light">
+            <span class="input-group-text">
                 <i class="fas fa-search"></i>
             </span>
-            <input type="text" id="search-input" class="form-control bg-dark text-light" 
+            <input type="text" id="search-input" class="form-control" 
                    placeholder="Search by name...">
         </div>
     </div>
 
-    <table class="table text-center">
-        <thead>
-            <tr>
-                <th data-sort="rank">Rank <i class="fas fa-sort"></i></th>
-                <th data-sort="name">Name <i class="fas fa-sort"></i></th>
-                <th data-sort="points">Points <i class="fas fa-sort"></i></th>
-                <th data-sort="achievements">Achievements <i class="fas fa-sort"></i></th>
-            </tr>
-        </thead>
-        <tbody id="leaderboard-body">
-            <tr><td colspan="4" class="text-center">
-                <div class="spinner-border text-orange" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </td></tr>
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table text-center">
+            <thead>
+                <tr>
+                    <th data-sort="rank">Rank <i class="fas fa-sort"></i></th>
+                    <th data-sort="name">Name <i class="fas fa-sort"></i></th>
+                    <th data-sort="points">Points <i class="fas fa-sort"></i></th>
+                    <th data-sort="achievements">Achievements <i class="fas fa-sort"></i></th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                <tr><td colspan="4" class="text-center">
+                    <div class="spinner-border text-orange" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </td></tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- User Profile Modal -->
@@ -375,83 +417,50 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Global variables
     let leaderboardData = [];
     let sortConfig = { column: 'rank', direction: 'asc' };
     const userModal = new bootstrap.Modal(document.getElementById('userModal'));
 
-    // DOM Content Loaded
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize theme
         initTheme();
-        
-        // Fetch initial data
         fetchLeaderboard();
-        
-        // Set up auto-refresh every 30 seconds
         setInterval(fetchLeaderboard, 30000);
-        
-        // Set up event listeners
         setupEventListeners();
     });
 
-    // Initialize theme from localStorage
     function initTheme() {
         const themeToggle = document.getElementById('theme-toggle');
         const isDarkMode = localStorage.getItem('darkMode') !== 'false';
-        
         if (!isDarkMode) {
             document.body.classList.add('light-mode');
             themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
         }
     }
 
-    // Set up all event listeners
     function setupEventListeners() {
-        // Theme toggle
         document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
-        
-        // Refresh button
         document.getElementById('refresh-btn').addEventListener('click', fetchLeaderboard);
-        
-        // Export button
         document.getElementById('export-btn').addEventListener('click', exportToCSV);
-        
-        // Search input
         document.getElementById('search-input').addEventListener('input', filterTable);
         
-        // Sortable headers
         document.querySelectorAll('thead th[data-sort]').forEach(header => {
-            header.addEventListener('click', () => {
-                const column = header.getAttribute('data-sort');
-                sortTable(column);
-            });
+            header.addEventListener('click', () => sortTable(header.getAttribute('data-sort')));
         });
         
-        // User name click for modal
         document.getElementById('leaderboard-body').addEventListener('click', function(e) {
-            if (e.target.classList.contains('name')) {
-                const userName = e.target.textContent;
-                showUserModal(userName);
-            }
+            if (e.target.classList.contains('name')) showUserModal(e.target.textContent);
         });
     }
 
-    // Toggle between dark and light mode
     function toggleTheme() {
         const themeToggle = document.getElementById('theme-toggle');
         document.body.classList.toggle('light-mode');
-        
-        if (document.body.classList.contains('light-mode')) {
-            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            localStorage.setItem('darkMode', 'false');
-        } else {
-            themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-            localStorage.setItem('darkMode', 'true');
-        }
+        themeToggle.innerHTML = document.body.classList.contains('light-mode') 
+            ? '<i class="fas fa-sun"></i>' 
+            : '<i class="fas fa-moon"></i>';
+        localStorage.setItem('darkMode', !document.body.classList.contains('light-mode'));
     }
 
-    // Fetch leaderboard data
     async function fetchLeaderboard() {
         try {
             document.getElementById('leaderboard-body').innerHTML = `
@@ -462,147 +471,99 @@
                 </td></tr>`;
             
             const response = await fetch("https://script.google.com/macros/s/AKfycbzM_37pu2Cuk1Hpwo9pkASRNzwZDqK2F8_oQufLFGSAcH0DjKtJs_qQRPULfxkcm3MPjg/exec");
-            
             if (!response.ok) throw new Error('Network response was not ok');
             
             leaderboardData = await response.json();
             renderTable(leaderboardData);
-            
         } catch (error) {
             document.getElementById('leaderboard-body').innerHTML = `
                 <tr><td colspan="4" class="text-center text-danger">
-                    Failed to load leaderboard data. Please try again later.
-                    <button class="btn btn-sm btn-orange mt-2" onclick="fetchLeaderboard()">
+                    Failed to load data. <button class="btn btn-sm btn-orange mt-2" onclick="fetchLeaderboard()">
                         <i class="fas fa-sync-alt"></i> Retry
                     </button>
                 </td></tr>`;
-            console.error('Error fetching leaderboard:', error);
+            console.error('Error:', error);
         }
     }
 
-    // Render table with data
     function renderTable(data) {
         let html = "";
-        
         data.forEach((player, index) => {
-            // Add animation delay based on index
             const animationDelay = `${index * 0.1}s`;
-            
-            // Format achievements with badges
             const achievements = formatAchievements(player.achievements);
-            
-            // Calculate points percentage for progress bar
             const maxPoints = Math.max(...data.map(p => parseInt(p.points))) || 100;
             const pointsPercentage = (parseInt(player.points) / maxPoints) * 100;
             
             html += `<tr style="animation-delay: ${animationDelay}">
-                <td><span class="rank-badge">${player.rank}</span></td>
-                <td><span class="name">${player.name}</span></td>
-                <td>
-                    <div class="d-flex align-items-center justify-content-center">
+                <td data-label="Rank"><span class="rank-badge">${player.rank}</span></td>
+                <td data-label="Name"><span class="name">${player.name}</span></td>
+                <td data-label="Points">
+                    <div class="d-flex align-items-center justify-content-center flex-wrap gap-2">
                         <span class="points me-2">${player.points}</span>
-                        <div class="progress" style="width: 100px;">
-                            <div class="progress-bar" style="width: ${pointsPercentage}%">
-                                ${player.points}
-                            </div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: ${pointsPercentage}%">${player.points}</div>
                         </div>
                     </div>
                 </td>
-                <td><span class="achievements">${achievements}</span></td>
+                <td data-label="Achievements"><span class="achievements">${achievements}</span></td>
             </tr>`;
         });
-        
         document.getElementById('leaderboard-body').innerHTML = html;
     }
 
-    // Format achievements with badges
     function formatAchievements(achievements) {
         if (!achievements) return 'None';
-        
-        // Split by comma and create badges
         return achievements.split(',').map(ach => {
             ach = ach.trim();
-            let badgeClass = 'badge-blue';
-            
-            if (ach.includes('Gold')) badgeClass = 'badge-gold';
-            else if (ach.includes('Silver')) badgeClass = 'badge-silver';
-            else if (ach.includes('Bronze')) badgeClass = 'badge-bronze';
-            
-            return `<span class="badge ${badgeClass}">${ach}</span>`;
+            let badgeClass = 'badge badge-blue';
+            if (ach.includes('Gold')) badgeClass = 'badge badge-gold';
+            else if (ach.includes('Silver')) badgeClass = 'badge badge-silver';
+            else if (ach.includes('Bronze')) badgeClass = 'badge badge-bronze';
+            return `<span class="${badgeClass}">${ach}</span>`;
         }).join(' ');
     }
 
-    // Sort table by column
     function sortTable(column) {
-        // Update sort config
-        if (sortConfig.column === column) {
-            sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
-        } else {
-            sortConfig.column = column;
-            sortConfig.direction = 'asc';
-        }
+        sortConfig.column = column;
+        sortConfig.direction = sortConfig.column === column && sortConfig.direction === 'asc' ? 'desc' : 'asc';
         
-        // Update sort indicators
-        document.querySelectorAll('thead th i').forEach(icon => {
-            icon.className = 'fas fa-sort';
-        });
+        document.querySelectorAll('thead th i').forEach(icon => icon.className = 'fas fa-sort');
+        const sortIcon = document.querySelector(`th[data-sort="${column}"] i`);
+        sortIcon.className = sortConfig.direction === 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down';
         
-        const currentHeader = document.querySelector(`th[data-sort="${column}"]`);
-        const sortIcon = currentHeader.querySelector('i');
-        sortIcon.className = sortConfig.direction === 'asc' 
-            ? 'fas fa-sort-up' 
-            : 'fas fa-sort-down';
-        
-        // Sort the data
         const sortedData = [...leaderboardData].sort((a, b) => {
             let valueA = a[column];
             let valueB = b[column];
-            
-            // Handle numeric sorting for rank and points
             if (column === 'rank' || column === 'points') {
                 valueA = parseInt(valueA);
                 valueB = parseInt(valueB);
+            } else {
+                valueA = valueA.toLowerCase();
+                valueB = valueB.toLowerCase();
             }
-            
-            // Handle string sorting for name and achievements
-            if (typeof valueA === 'string') valueA = valueA.toLowerCase();
-            if (typeof valueB === 'string') valueB = valueB.toLowerCase();
-            
-            if (valueA < valueB) return sortConfig.direction === 'asc' ? -1 : 1;
-            if (valueA > valueB) return sortConfig.direction === 'asc' ? 1 : -1;
-            return 0;
+            return sortConfig.direction === 'asc' ? valueA - valueB || valueA.localeCompare(valueB) : valueB - valueA || valueB.localeCompare(valueA);
         });
-        
         renderTable(sortedData);
     }
 
-    // Filter table based on search input
     function filterTable() {
         const searchTerm = document.getElementById('search-input').value.toLowerCase();
-        const rows = document.querySelectorAll('#leaderboard-body tr');
-        
-        rows.forEach(row => {
+        document.querySelectorAll('#leaderboard-body tr').forEach(row => {
             const name = row.querySelector('.name')?.textContent.toLowerCase() || '';
             row.style.display = name.includes(searchTerm) ? '' : 'none';
         });
     }
 
-    // Show user modal
     function showUserModal(userName) {
         const user = leaderboardData.find(u => u.name === userName);
         if (!user) return;
         
         document.getElementById('userModalTitle').textContent = `${userName}'s Profile`;
-        
-        // Format user details
         const userDetails = `
             <div class="mb-3">
-                <div class="rank-badge mx-auto mb-2" style="width: 60px; height: 60px; font-size: 1.5rem;">
-                    ${user.rank}
-                </div>
+                <div class="rank-badge mx-auto mb-2" style="width: 60px; height: 60px; font-size: 1.5rem;">${user.rank}</div>
                 <h4 class="text-orange">${userName}</h4>
             </div>
-            
             <div class="row text-start">
                 <div class="col-md-6 mb-2">
                     <strong><i class="fas fa-star me-2"></i>Points:</strong> 
@@ -613,52 +574,30 @@
                     <div class="mt-1">${formatAchievements(user.achievements)}</div>
                 </div>
             </div>
-            
             <div class="mt-3">
                 <h5 class="text-orange">Progress</h5>
                 <div class="progress mb-2" style="height: 25px;">
-                    <div class="progress-bar" style="width: ${(parseInt(user.points) / 100) * 100}%">
-                        ${user.points} Points
-                    </div>
+                    <div class="progress-bar" style="width: ${(parseInt(user.points) / 100) * 100}%">${user.points} Points</div>
                 </div>
-            </div>
-        `;
+            </div>`;
         
         document.getElementById('user-details').innerHTML = userDetails;
         userModal.show();
     }
 
-    // Export to CSV
     function exportToCSV() {
         if (!leaderboardData.length) return;
-        
         const headers = ['Rank', 'Name', 'Points', 'Achievements'];
-        const csvRows = [];
+        const csvRows = [headers.join(',')];
         
-        // Add header row
-        csvRows.push(headers.join(','));
-        
-        // Add data rows
         leaderboardData.forEach(user => {
-            const row = [
-                user.rank,
-                `"${user.name}"`,
-                user.points,
-                `"${user.achievements || ''}"`
-            ];
-            csvRows.push(row.join(','));
+            csvRows.push([user.rank, `"${user.name}"`, user.points, `"${user.achievements || ''}"`].join(','));
         });
         
-        // Create CSV and download
-        const csvContent = csvRows.join('\n');
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
+        const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
-        
-        link.setAttribute('href', url);
-        link.setAttribute('download', 'yha_coder_leaderboard.csv');
-        link.style.visibility = 'hidden';
-        
+        link.href = URL.createObjectURL(blob);
+        link.download = 'yha_coder_leaderboard.csv';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
