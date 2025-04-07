@@ -214,30 +214,36 @@
         }
 
         .table-responsive {
-            max-height: 60vh;
-            overflow-y: hidden;
+            max-height: 70vh; /* Adjusted to give more visible area */
+            overflow-y: auto; /* Always show vertical scrollbar when content overflows */
+            overflow-x: hidden; /* Prevent horizontal scrolling unless needed */
         }
 
+        .table-responsive::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: var(--primary-orange);
+            border-radius: 4px;
+        }
+
+        .table-responsive::-webkit-scrollbar-track {
+            background: rgba(255, 98, 0, 0.1);
+        }
+
+        .light-mode .table-responsive::-webkit-scrollbar-thumb {
+            background: var(--light-orange);
+        }
+
+        .light-mode .table-responsive::-webkit-scrollbar-track {
+            background: rgba(255, 140, 0, 0.1);
+        }
+
+        /* Responsive Design */
         @media (min-width: 769px) {
             .leaderboard {
                 max-width: 95%;
-            }
-
-            .table-responsive:hover {
-                overflow-y: auto;
-            }
-
-            .table-responsive::-webkit-scrollbar {
-                width: 8px;
-            }
-
-            .table-responsive::-webkit-scrollbar-thumb {
-                background: var(--primary-orange);
-                border-radius: 4px;
-            }
-
-            .table-responsive::-webkit-scrollbar-track {
-                background: rgba(255, 98, 0, 0.1);
             }
         }
 
@@ -245,7 +251,8 @@
             .table-responsive {
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
-                max-height: none;
+                max-height: none; /* Remove height restriction on smaller screens */
+                overflow-y: visible; /* Let content flow naturally */
             }
 
             .table {
