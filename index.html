@@ -247,21 +247,21 @@
 
         /* Modal Chart Fixes */
         #points-history {
-            height: 340px; /* Fixed height for consistency */
-            padding-bottom: 10px; /* Reduced padding */
+            height: 340px;
+            padding-bottom: 10px;
         }
 
         #pointsChart {
             width: 100% !important;
-            height: 300px !important; /* Fixed chart height */
+            height: 300px !important;
         }
 
         .modal-body {
-            padding: 15px; /* Reduced padding to fit content */
+            padding: 15px;
         }
 
         .modal-dialog {
-            max-width: 800px; /* Slightly larger but fixed width */
+            max-width: 800px;
         }
 
         @media (min-width: 769px) {
@@ -306,11 +306,11 @@
             }
 
             #points-history {
-                height: 300px; /* Adjust height for smaller screens */
+                height: 300px;
             }
 
             #pointsChart {
-                height: 260px !important; /* Adjust chart height */
+                height: 260px !important;
             }
         }
 
@@ -654,7 +654,7 @@
         const weeklyBtn = document.getElementById('weekly-btn');
         dailyBtn.classList.toggle('active', currentChartView === 'daily');
         weeklyBtn.classList.toggle('active', currentChartView === 'weekly');
-        document.getElementById('chart-title').textContent = currentChartView === 'daily' ? 'Daily Points Change' : 'Weekly Points Change';
+        document.getElementById('chart-title').textContent = currentChartView === 'daily' ? 'Daily Points Change' : 'Weekly Points Total';
     }
 
     function renderPointsHistoryChart(user) {
@@ -674,14 +674,15 @@
             return;
         }
 
-        let labels, data, xTitle;
+        let labels, data, xTitle, yTitle;
         if (currentChartView === 'daily') {
             // Daily view: show individual point changes
             labels = history.map(entry => new Date(entry.timestamp).toLocaleDateString());
             data = history.map(entry => parseFloat(entry.points));
             xTitle = 'Date';
+            yTitle = 'Points Change';
         } else {
-            // Weekly view: aggregate and calculate changes
+            // Weekly view: show total points per week
             const weeklyTotals = {};
             history.forEach(entry => {
                 const date = new Date(entry.timestamp);
@@ -689,19 +690,10 @@
                 weeklyTotals[weekStart] = (weeklyTotals[weekStart] || 0) + parseFloat(entry.points);
             });
 
-            const weeks = Object.keys(weeklyTotals).sort((a, b) => new Date(a) - new Date(b));
-            const weeklyChanges = [];
-            for (let i = 0; i < weeks.length; i++) {
-                if (i === 0) {
-                    weeklyChanges.push(weeklyTotals[weeks[i]]); // First week: total points
-                } else {
-                    const change = weeklyTotals[weeks[i]] - weeklyTotals[weeks[i - 1]];
-                    weeklyChanges.push(change); // Difference from previous week
-                }
-            }
-            labels = weeks;
-            data = weeklyChanges;
+            labels = Object.keys(weeklyTotals).sort((a, b) => new Date(a) - new Date(b));
+            data = labels.map(week => weeklyTotals[week]); // Total points per week
             xTitle = 'Week Starting';
+            yTitle = 'Total Points';
         }
 
         // Destroy previous chart instance if it exists
@@ -715,7 +707,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: currentChartView === 'daily' ? 'Daily Points Change' : 'Weekly Points Change',
+                    label: currentChartView === 'daily' ? 'Daily Points Change' : 'Weekly Points Total',
                     data: data,
                     borderColor: 'rgba(255, 98, 0, 1)',
                     backgroundColor: data.map(value => value >= 0 ? 'rgba(255, 98, 0, 0.2)' : 'rgba(255, 0, 0, 0.2)'),
@@ -743,7 +735,7 @@
                     y: {
                         title: {
                             display: true,
-                            text: 'Points Change',
+                            text: yTitle,
                             color: '#fff'
                         },
                         ticks: { color: '#fff' },
@@ -764,7 +756,7 @@
                                     label += ': ';
                                 }
                                 const value = context.parsed.y;
-                                label += value >= 0 ? `+${value}` : `${value}`;
+                                label += value >= 0 ? `${value}` : `${value}`;
                                 return label;
                             }
                         }
