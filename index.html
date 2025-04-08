@@ -6,6 +6,7 @@
     <title>YHA Coder Leaderboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary-orange: #ff6200;
@@ -19,7 +20,6 @@
             background: radial-gradient(circle at center, var(--dark-bg) 0%, var(--darker-bg) 100%);
             font-family: 'Orbitron', sans-serif;
             color: #ffffff;
-          
             margin: 0;
             padding: 0;
             overflow-x: hidden;
@@ -214,9 +214,9 @@
         }
 
         .table-responsive {
-            max-height: 70vh; /* Adjusted to give more visible area */
-            overflow-y: auto; /* Always show vertical scrollbar when content overflows */
-            overflow-x: hidden; /* Prevent horizontal scrolling unless needed */
+            max-height: 70vh;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .table-responsive::-webkit-scrollbar {
@@ -240,7 +240,6 @@
             background: rgba(255, 140, 0, 0.1);
         }
 
-        /* Responsive Design */
         @media (min-width: 769px) {
             .leaderboard {
                 max-width: 95%;
@@ -251,8 +250,8 @@
             .table-responsive {
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
-                max-height: none; /* Remove height restriction on smaller screens */
-                overflow-y: visible; /* Let content flow naturally */
+                max-height: none;
+                overflow-y: visible;
             }
 
             .table {
@@ -333,7 +332,6 @@
             }
         }
 
-        /* Animations */
         @keyframes scanline {
             0% { transform: translateY(-100%); }
             100% { transform: translateY(100%); }
@@ -402,7 +400,7 @@
 
 <!-- User Profile Modal -->
 <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content bg-dark text-light">
             <div class="modal-header border-orange">
                 <h5 class="modal-title" id="userModalTitle">User Profile</h5>
@@ -413,6 +411,17 @@
                     <div class="spinner-border text-orange" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
+                </div>
+                <!-- Points History Section -->
+                <div id="points-history" class="mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="text-orange" id="chart-title">Points History</h5>
+                        <div class="btn-group">
+                            <button id="daily-btn" class="btn btn-sm btn-orange active" onclick="toggleChartView('daily')">Daily</button>
+                            <button id="weekly-btn" class="btn btn-sm btn-orange" onclick="toggleChartView('weekly')">Weekly</button>
+                        </div>
+                    </div>
+                    <canvas id="pointsChart" style="max-height: 300px;"></canvas>
                 </div>
             </div>
             <div class="modal-footer border-orange">
@@ -427,11 +436,12 @@
     let leaderboardData = [];
     let sortConfig = { column: 'rank', direction: 'asc' };
     const userModal = new bootstrap.Modal(document.getElementById('userModal'));
+    let currentChartView = 'daily'; // Default view
 
     document.addEventListener('DOMContentLoaded', function() {
         initTheme();
         fetchLeaderboard();
-        setInterval(fetchLeaderboard, 30000);
+        setInterval(fetchLeaderboard, 300000);
         setupEventListeners();
     });
 
@@ -477,7 +487,7 @@
                     </div>
                 </td></tr>`;
             
-            const response = await fetch("https://script.google.com/macros/s/AKfycbzM_37pu2Cuk1Hpwo9pkASRNzwZDqK2F8_oQufLFGSAcH0DjKtJs_qQRPULfxkcm3MPjg/exec");
+            const response = await fetch("https://script.google.com/macros/s/AKfycbyHQY0j9x7sI5teqVb6CyYFbMyOC-TL9I_AyDVeaHR9l2NKSHkIrOsZzPuhJYbvicxZ_w/exec");
             if (!response.ok) throw new Error('Network response was not ok');
             
             leaderboardData = await response.json();
@@ -589,7 +599,147 @@
             </div>`;
         
         document.getElementById('user-details').innerHTML = userDetails;
+        
+        // Render Points History Chart with default view (daily)
+        currentChartView = 'daily';
+        renderPointsHistoryChart(user);
+        updateChartButtons();
+
         userModal.show();
+    }
+
+    function toggleChartView(view) {
+        if (currentChartView === view) return;
+        currentChartView = view;
+        const userName = document.getElementById('userModalTitle').textContent.replace("'s Profile", "");
+        const user = leaderboardData.find(u => u.name === userName);
+        renderPointsHistoryChart(user);
+        updateChartButtons();
+    }
+
+    function updateChartButtons() {
+        const dailyBtn = document.getElementById('daily-btn');
+        const weeklyBtn = document.getElementById('weekly-btn');
+        dailyBtn.classList.toggle('active', currentChartView === 'daily');
+        weeklyBtn.classList.toggle('active', currentChartView === 'weekly');
+        document.getElementById('chart-title').textContent = currentChartView === 'daily' ? 'Daily Points Change' : 'Weekly Points Change';
+    }
+
+    function renderPointsHistoryChart(user) {
+        const ctx = document.getElementById('pointsChart').getContext('2d');
+        const history = user.pointsHistory || [];
+
+        if (!history.length) {
+            document.getElementById('points-history').innerHTML = `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-orange" id="chart-title">Points History</h5>
+                    <div class="btn-group">
+                        <button id="daily-btn" class="btn btn-sm btn-orange active" onclick="toggleChartView('daily')">Daily</button>
+                        <button id="weekly-btn" class="btn btn-sm btn-orange" onclick="toggleChartView('weekly')">Weekly</button>
+                    </div>
+                </div>
+                <p>No history available.</p>`;
+            return;
+        }
+
+        let labels, data, xTitle;
+        if (currentChartView === 'daily') {
+            // Daily view: show individual point changes
+            labels = history.map(entry => new Date(entry.timestamp).toLocaleDateString());
+            data = history.map(entry => parseFloat(entry.points));
+            xTitle = 'Date';
+        } else {
+            // Weekly view: aggregate and calculate changes
+            const weeklyTotals = {};
+            history.forEach(entry => {
+                const date = new Date(entry.timestamp);
+                const weekStart = new Date(date.setDate(date.getDate() - date.getDay())).toLocaleDateString();
+                weeklyTotals[weekStart] = (weeklyTotals[weekStart] || 0) + parseFloat(entry.points);
+            });
+
+            const weeks = Object.keys(weeklyTotals).sort((a, b) => new Date(a) - new Date(b));
+            const weeklyChanges = [];
+            for (let i = 0; i < weeks.length; i++) {
+                if (i === 0) {
+                    weeklyChanges.push(weeklyTotals[weeks[i]]); // First week: total points
+                } else {
+                    const change = weeklyTotals[weeks[i]] - weeklyTotals[weeks[i - 1]];
+                    weeklyChanges.push(change); // Difference from previous week
+                }
+            }
+            labels = weeks;
+            data = weeklyChanges;
+            xTitle = 'Week Starting';
+        }
+
+        // Destroy previous chart instance if it exists
+        if (window.pointsChartInstance) {
+            window.pointsChartInstance.destroy();
+        }
+
+        // Create new chart
+        window.pointsChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: currentChartView === 'daily' ? 'Daily Points Change' : 'Weekly Points Change',
+                    data: data,
+                    borderColor: 'rgba(255, 98, 0, 1)',
+                    backgroundColor: data.map(value => value >= 0 ? 'rgba(255, 98, 0, 0.2)' : 'rgba(255, 0, 0, 0.2)'),
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: data.map(value => value >= 0 ? 'rgba(255, 98, 0, 1)' : 'rgba(255, 0, 0, 1)'),
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(255, 98, 0, 1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: xTitle,
+                            color: '#fff'
+                        },
+                        ticks: { color: '#fff' },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Points Change',
+                            color: '#fff'
+                        },
+                        ticks: { color: '#fff' },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        suggestedMin: Math.min(...data, 0) * 1.2,
+                        suggestedMax: Math.max(...data, 0) * 1.2
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: '#fff' }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                const value = context.parsed.y;
+                                label += value >= 0 ? `+${value}` : `${value}`;
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     function exportToCSV() {
