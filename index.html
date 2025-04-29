@@ -118,7 +118,7 @@
         }
 
         .rank-badge {
-            background: linear-gradient(45deg, orange , var(--primary-orange));
+            background: linear-gradient(45deg, orange, var(--primary-orange));
             color: #fff;
             border-radius: 50%;
             width: clamp(25px, 4vw, 40px);
@@ -139,6 +139,11 @@
 
         .points {
             color: var(--gold);
+            font-weight: bold;
+        }
+
+        .averages {
+            color: #ffab40;
             font-weight: bold;
         }
 
@@ -163,18 +168,28 @@
         .badge-blue { background: linear-gradient(45deg, #3498db, #2980b9); }
 
         .progress {
-            height: clamp(15px, 2vw, 20px);
+            height: clamp(12px, 1.5vw, 16px);
             background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
+            border-radius: 8px;
             width: 100%;
-            max-width: 150px;
+            max-width: 200px;
             margin: 0 auto;
+            overflow: hidden;
         }
 
         .progress-bar {
             background: linear-gradient(90deg, var(--light-orange), var(--primary-orange));
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: clamp(0.6rem, 1vw, 0.8rem);
+            transition: width 0.3s ease;
+        }
+
+        .points-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .btn-orange {
@@ -362,6 +377,15 @@
             .light-mode .achievements {
                 color: #e67e22;
             }
+
+            .points-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .progress {
+                max-width: 100%;
+            }
         }
 
         @keyframes scanline {
@@ -416,11 +440,12 @@
                     <th data-sort="rank">Rank <i class="fas fa-sort"></i></th>
                     <th data-sort="name">Name <i class="fas fa-sort"></i></th>
                     <th data-sort="points">Points <i class="fas fa-sort"></i></th>
+                    <th data-sort="averages">Averages <i class="fas fa-sort"></i></th>
                     <th data-sort="achievements">Achievements <i class="fas fa-sort"></i></th>
                 </tr>
             </thead>
             <tbody id="leaderboard-body">
-                <tr><td colspan="4" class="text-center">
+                <tr><td colspan="5" class="text-center">
                     <div class="spinner-border text-orange" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
@@ -513,20 +538,20 @@
     async function fetchLeaderboard() {
         try {
             document.getElementById('leaderboard-body').innerHTML = `
-                <tr><td colspan="4" class="text-center">
+                <tr><td colspan="5" class="text-center">
                     <div class="spinner-border text-orange" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
                 </td></tr>`;
             
-            const response = await fetch("https://script.google.com/macros/s/AKfycbyHQY0j9x7sI5teqVb6CyYFbMyOC-TL9I_AyDVeaHR9l2NKSHkIrOsZzPuhJYbvicxZ_w/exec");
+            const response = await fetch("https://script.google.com/macros/s/AKfycbyVAV8QIzzphbtZZGPK7-qfKpwbcEjGcuYwmSSZ6Qydg2slaMAQ6N2lUChYZhL12b6_3Q/exec");
             if (!response.ok) throw new Error('Network response was not ok');
             
             leaderboardData = await response.json();
             renderTable(leaderboardData);
         } catch (error) {
             document.getElementById('leaderboard-body').innerHTML = `
-                <tr><td colspan="4" class="text-center text-danger">
+                <tr><td colspan="5" class="text-center text-danger">
                     Failed to load data. <button class="btn btn-sm btn-orange mt-2" onclick="fetchLeaderboard()">
                         <i class="fas fa-sync-alt"></i> Retry
                     </button>
@@ -547,13 +572,14 @@
                 <td data-label="Rank"><span class="rank-badge">${player.rank}</span></td>
                 <td data-label="Name"><span class="name">${player.name}</span></td>
                 <td data-label="Points">
-                    <div class="d-flex align-items-center justify-content-center flex-wrap gap-2">
+                    <div class="points-container">
                         <span class="points me-2">${player.points}</span>
                         <div class="progress">
                             <div class="progress-bar" style="width: ${pointsPercentage}%">${player.points}</div>
                         </div>
                     </div>
                 </td>
+                <td data-label="Averages"><span class="averages">${player.averages}%</span></td>
                 <td data-label="Achievements"><span class="achievements">${achievements}</span></td>
             </tr>`;
         });
@@ -565,9 +591,9 @@
         return achievements.split(',').map(ach => {
             ach = ach.trim();
             let badgeClass = 'badge badge-blue';
-            if (ach.includes('Gold')) badgeClass = 'badge badge-gold';
-            else if (ach.includes('Silver')) badgeClass = 'badge badge-silver';
-            else if (ach.includes('Bronze')) badgeClass = 'badge badge-bronze';
+            if (ach.includes('Master')) badgeClass = 'badge badge-gold';
+            else if (ach.includes('Advanced')) badgeClass = 'badge badge-silver';
+            else if (ach.includes('Beginner')) badgeClass = 'badge badge-bronze';
             return `<span class="${badgeClass}">${ach}</span>`;
         }).join(' ');
     }
@@ -583,14 +609,16 @@
         const sortedData = [...leaderboardData].sort((a, b) => {
             let valueA = a[column];
             let valueB = b[column];
-            if (column === 'rank' || column === 'points') {
+            if (column === 'rank' || column === 'points' || column === 'averages') {
                 valueA = parseInt(valueA);
                 valueB = parseInt(valueB);
             } else {
                 valueA = valueA.toLowerCase();
                 valueB = valueB.toLowerCase();
             }
-            return sortConfig.direction === 'asc' ? valueA - valueB || valueA.localeCompare(valueB) : valueB - valueA || valueB.localeCompare(valueA);
+            return sortConfig.direction === 'asc' ? 
+                (valueA - valueB || valueA.localeCompare(valueB)) : 
+                (valueB - valueA || valueB.localeCompare(valueA));
         });
         renderTable(sortedData);
     }
@@ -617,6 +645,10 @@
                 <div class="col-md-6 mb-2">
                     <strong><i class="fas fa-star me-2"></i>Points:</strong> 
                     <span class="points">${user.points}</span>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <strong><i class="fas fa-percentage me-2"></i>Averages:</strong> 
+                    <span class="averages">${user.averages}%</span>
                 </div>
                 <div class="col-md-6 mb-2">
                     <strong><i class="fas fa-trophy me-2"></i>Achievements:</strong>
@@ -676,13 +708,11 @@
 
         let labels, data, xTitle, yTitle;
         if (currentChartView === 'daily') {
-            // Daily view: show individual point changes
             labels = history.map(entry => new Date(entry.timestamp).toLocaleDateString());
             data = history.map(entry => parseFloat(entry.points));
             xTitle = 'Date';
             yTitle = 'Points Change';
         } else {
-            // Weekly view: show total points per week
             const weeklyTotals = {};
             history.forEach(entry => {
                 const date = new Date(entry.timestamp);
@@ -691,32 +721,25 @@
             });
 
             labels = Object.keys(weeklyTotals).sort((a, b) => new Date(a) - new Date(b));
-            data = labels.map(week => weeklyTotals[week]); // Total points per week
+            data = labels.map(week => weeklyTotals[week]);
             xTitle = 'Week Starting';
             yTitle = 'Total Points';
         }
 
-        // Destroy previous chart instance if it exists
         if (window.pointsChartInstance) {
             window.pointsChartInstance.destroy();
         }
 
-        // Create new chart
         window.pointsChartInstance = new Chart(ctx, {
-            type: 'line',
+            type: 'bar', // Changed to Bar Chart
             data: {
                 labels: labels,
                 datasets: [{
                     label: currentChartView === 'daily' ? 'Daily Points Change' : 'Weekly Points Total',
                     data: data,
-                    borderColor: 'rgba(255, 98, 0, 1)',
-                    backgroundColor: data.map(value => value >= 0 ? 'rgba(255, 98, 0, 0.2)' : 'rgba(255, 0, 0, 0.2)'),
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: data.map(value => value >= 0 ? 'rgba(255, 98, 0, 1)' : 'rgba(255, 0, 0, 1)'),
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(255, 98, 0, 1)'
+                    backgroundColor: data.map(value => value >= 0 ? 'rgba(255, 98, 0, 0.6)' : 'rgba(255, 0, 0, 0.6)'),
+                    borderColor: data.map(value => value >= 0 ? 'rgba(255, 98, 0, 1)' : 'rgba(255, 0, 0, 1)'),
+                    borderWidth: 1
                 }]
             },
             options: {
@@ -768,11 +791,11 @@
 
     function exportToCSV() {
         if (!leaderboardData.length) return;
-        const headers = ['Rank', 'Name', 'Points', 'Achievements'];
+        const headers = ['Rank', 'Name', 'Points', 'Averages', 'Achievements'];
         const csvRows = [headers.join(',')];
         
         leaderboardData.forEach(user => {
-            csvRows.push([user.rank, `"${user.name}"`, user.points, `"${user.achievements || ''}"`].join(','));
+            csvRows.push([user.rank, `"${user.name}"`, user.points, `"${user.averages}%"`, `"${user.achievements || ''}"`].join(','));
         });
         
         const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
