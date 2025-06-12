@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YHA Coder Leaderboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -160,6 +160,25 @@
             font-weight: 700;
             box-shadow: 0 3px 10px var(--shadow-color);
             animation: pulse 2s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rank-badge:hover::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 0.8s ease-out;
         }
 
         .name {
@@ -208,6 +227,7 @@
             color: #fff;
             backdrop-filter: blur(6px);
             transition: transform 0.2s ease;
+            position: relative;
         }
 
         .badge:hover {
@@ -218,6 +238,29 @@
         .badge-silver { background: linear-gradient(45deg, #d0d0d0, #a0a0a0); }
         .badge-bronze { background: linear-gradient(45deg, #cd7f32, #a0522d); }
         .badge-blue { background: linear-gradient(45deg, #3498db, #2980b9); }
+
+        .badge[data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            z-index: 100;
+        }
+
+        .badge:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
 
         .progress {
             height: clamp(16px, 1.8vw, 20px);
@@ -271,6 +314,17 @@
             box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.25);
         }
 
+        .btn-orange:focus-visible,
+        .btn-close:focus-visible,
+        .name:focus-visible {
+            outline: 2px solid var(--primary-orange);
+            outline-offset: 2px;
+        }
+
+        .search-box .input-group {
+            position: relative;
+        }
+
         .search-box .input-group-text {
             background: var(--glass-bg);
             color: var(--text-color);
@@ -287,6 +341,7 @@
             border-radius: 0 12px 12px 0;
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
+            padding-right: 30px;
         }
 
         .light-mode .search-box .input-group-text,
@@ -294,6 +349,32 @@
             background: rgba(255, 255, 255, 0.75);
             color: #333333;
             border-color: rgba(0, 0, 0, 0.15);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            cursor: pointer;
+            display: none;
+            z-index: 10;
+        }
+
+        .search-clear:hover {
+            color: var(--primary-orange);
+        }
+
+        .light-mode .search-clear {
+            color: #333333;
+        }
+
+        .light-mode .search-clear:hover {
+            color: var(--light-orange);
         }
 
         .table-responsive {
@@ -541,6 +622,11 @@
             to { opacity: 1; transform: scale(1); }
         }
 
+        @keyframes shine {
+            from { transform: translateX(-100%) rotate(45deg); }
+            to { transform: translateX(100%) rotate(45deg); }
+        }
+
         @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
     </style>
 </head>
@@ -550,13 +636,13 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0"><i class="fa-solid fa-terminal"></i> YHA Coder Leaderboard</h2>
         <div class="btn-group">
-            <button id="theme-toggle" class="btn btn-sm btn-orange ripple" title="Toggle theme">
+            <button id="theme-toggle" class="btn btn-sm btn-orange ripple" title="Toggle theme" aria-label="Toggle theme">
                 <i class="fas fa-moon"></i>
             </button>
-            <button id="refresh-btn" class="btn btn-sm btn-orange ripple" title="Refresh data">
+            <button id="refresh-btn" class="btn btn-sm btn-orange ripple" title="Refresh data" aria-label="Refresh leaderboard data">
                 <i class="fas fa-sync-alt"></i>
             </button>
-            <button id="export-btn" class="btn btn-sm btn-success ripple" title="Export to CSV">
+            <button id="export-btn" class="btn btn-sm btn-success ripple" title="Export to CSV" aria-label="Export leaderboard to CSV">
                 <i class="fas fa-file-export"></i>
             </button>
         </div>
@@ -568,7 +654,10 @@
                 <i class="fas fa-search"></i>
             </span>
             <input type="text" id="search-input" class="form-control" 
-                   placeholder="Search by name...">
+                   placeholder="Search by name..." aria-label="Search leaderboard by name">
+            <button id="search-clear" class="search-clear" aria-label="Clear search">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
     </div>
 
@@ -576,11 +665,11 @@
         <table class="table text-center">
             <thead>
                 <tr>
-                    <th data-sort="rank" class="ripple">Rank <i class="fas fa-sort"></i></th>
-                    <th data-sort="name" class="ripple">Name <i class="fas fa-sort"></i></th>
-                    <th data-sort="points" class="ripple">Points <i class="fas fa-sort"></i></th>
-                    <th data-sort="averages" class="ripple">Averages <i class="fas fa-sort"></i></th>
-                    <th data-sort="achievements" class="ripple">Achievements <i class="fas fa-sort"></i></th>
+                    <th data-sort="rank" class="ripple" aria-sort="ascending" aria-label="Sort by rank">Rank <i class="fas fa-sort"></i></th>
+                    <th data-sort="name" class="ripple" aria-label="Sort by name">Name <i class="fas fa-sort"></i></th>
+                    <th data-sort="points" class="ripple" aria-label="Sort by points">Points <i class="fas fa-sort"></i></th>
+                    <th data-sort="averages" class="ripple" aria-label="Sort by averages">Averages <i class="fas fa-sort"></i></th>
+                    <th data-sort="achievements" class="ripple" aria-label="Sort by achievements">Achievements <i class="fas fa-sort"></i></th>
                 </tr>
             </thead>
             <tbody id="leaderboard-body">
@@ -595,7 +684,7 @@
 </div>
 
 <!-- User Profile Modal -->
-<div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true" aria-labelledby="userModalTitle">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header border-orange">
@@ -613,15 +702,15 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="text-orange" id="chart-title">Daily Points Change</h5>
                         <div class="btn-group">
-                            <button id="daily-btn" class="btn btn-sm btn-orange active ripple" onclick="toggleChartView('daily')">Daily</button>
-                            <button id="weekly-btn" class="btn btn-sm btn-orange ripple" onclick="toggleChartView('weekly')">Weekly</button>
+                            <button id="daily-btn" class="btn btn-sm btn-orange active ripple" onclick="toggleChartView('daily')" aria-label="View daily points">Daily</button>
+                            <button id="weekly-btn" class="btn btn-sm btn-orange ripple" onclick="toggleChartView('weekly')" aria-label="View weekly points">Weekly</button>
                         </div>
                     </div>
                     <canvas id="pointsChart"></canvas>
                 </div>
             </div>
             <div class="modal-footer border-orange">
-                <button type="button" class="btn btn-orange ripple" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-orange ripple" data-bs-dismiss="modal" aria-label="Close modal">Close</button>
             </div>
         </div>
     </div>
@@ -633,6 +722,19 @@
     let sortConfig = { column: 'rank', direction: 'asc' };
     const userModal = new bootstrap.Modal(document.getElementById('userModal'));
     let currentChartView = 'daily';
+
+    // Debounce function
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
         initTheme();
@@ -658,11 +760,8 @@
 
         window.addEventListener('scroll', () => {
             const scrollY = window.scrollY;
-            // Background parallax
             parallaxBg.style.transform = `translateY(${scrollY * 0.3}px)`;
-            // Header parallax
             header.style.transform = `translateY(${scrollY * 0.1}px)`;
-            // Table rows parallax
             tableRows.forEach((row, index) => {
                 const offset = (index % 2 === 0 ? 1 : -1) * scrollY * 0.05;
                 row.style.transform = `translateY(${offset}px)`;
@@ -674,8 +773,23 @@
         document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
         document.getElementById('refresh-btn').addEventListener('click', fetchLeaderboard);
         document.getElementById('export-btn').addEventListener('click', exportToCSV);
-        document.getElementById('search-input').addEventListener('input', filterTable);
         
+        const searchInput = document.getElementById('search-input');
+        const searchClear = document.getElementById('search-clear');
+        
+        const debouncedFilter = debounce(filterTable, 300);
+        searchInput.addEventListener('input', () => {
+            debouncedFilter();
+            searchClear.style.display = searchInput.value ? 'block' : 'none';
+        });
+
+        searchClear.addEventListener('click', () => {
+            searchInput.value = '';
+            debouncedFilter();
+            searchClear.style.display = 'none';
+            searchInput.focus();
+        });
+
         document.querySelectorAll('thead th[data-sort]').forEach(header => {
             header.addEventListener('click', () => sortTable(header.getAttribute('data-sort')));
         });
@@ -684,7 +798,6 @@
             if (e.target.classList.contains('name')) showUserModal(e.target.textContent);
         });
 
-        // Add ripple effect
         document.querySelectorAll('.ripple').forEach(element => {
             element.addEventListener('click', function(e) {
                 const rect = this.getBoundingClientRect();
@@ -739,7 +852,7 @@
         } catch (error) {
             document.getElementById('leaderboard-body').innerHTML = `
                 <tr><td colspan="5" class="text-center text-danger">
-                    Failed to load data. <button class="btn btn-sm btn-orange mt-2 ripple" onclick="fetchLeaderboard()">
+                    Failed to load data. <button class="btn btn-sm btn-orange mt-2 ripple" onclick="fetchLeaderboard()" aria-label="Retry loading data">
                         <i class="fas fa-sync-alt"></i> Retry
                     </button>
                 </td></tr>`;
@@ -757,7 +870,7 @@
             
             html += `<tr style="animation-delay: ${animationDelay}" class="ripple">
                 <td data-label="Rank"><span class="rank-badge">${player.rank}</span></td>
-                <td data-label="Name"><span class="name ripple">${player.name}</span></td>
+                <td data-label="Name"><span class="name ripple" tabindex="0" aria-label="View ${player.name}'s profile">${player.name}</span></td>
                 <td data-label="Points">
                     <div class="points-container">
                         <span class="points me-2">${player.points}</span>
@@ -771,18 +884,24 @@
             </tr>`;
         });
         document.getElementById('leaderboard-body').innerHTML = html;
-        setupParallax(); // Re-apply parallax to new rows
+        setupParallax();
     }
 
     function formatAchievements(achievements) {
         if (!achievements) return 'None';
+        const tooltipMap = {
+            'Master': 'Achieved mastery in coding challenges',
+            'Advanced': 'Completed advanced coding tasks',
+            'Beginner': 'Completed beginner coding tasks'
+        };
         return achievements.split(',').map(ach => {
             ach = ach.trim();
             let badgeClass = 'badge badge-blue';
             if (ach.includes('Master')) badgeClass = 'badge badge-gold';
             else if (ach.includes('Advanced')) badgeClass = 'badge badge-silver';
             else if (ach.includes('Beginner')) badgeClass = 'badge badge-bronze';
-            return `<span class="${badgeClass}">${ach}</span>`;
+            const tooltip = tooltipMap[ach] || 'Special achievement';
+            return `<span class="${badgeClass}" data-tooltip="${tooltip}">${ach}</span>`;
         }).join(' ');
     }
 
@@ -793,6 +912,7 @@
         document.querySelectorAll('thead th i').forEach(icon => icon.className = 'fas fa-sort');
         const sortIcon = document.querySelector(`th[data-sort="${column}"] i`);
         sortIcon.className = sortConfig.direction === 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down';
+        document.querySelector(`th[data-sort="${column}"]`).setAttribute('aria-sort', sortConfig.direction);
         
         const sortedData = [...leaderboardData].sort((a, b) => {
             let valueA = a[column];
@@ -885,8 +1005,8 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="text-orange" id="chart-title">Points History</h5>
                     <div class="btn-group">
-                        <button id="daily-btn" class="btn btn-sm btn-orange active ripple" onclick="toggleChartView('daily')">Daily</button>
-                        <button id="weekly-btn" class="btn btn-sm btn-orange ripple" onclick="toggleChartView('weekly')">Weekly</button>
+                        <button id="daily-btn" class="btn btn-sm btn-orange active ripple" onclick="toggleChartView('daily')" aria-label="View daily points">Daily</button>
+                        <button id="weekly-btn" class="btn btn-sm btn-orange ripple" onclick="toggleChartView('weekly')" aria-label="View weekly points">Weekly</button>
                     </div>
                 </div>
                 <p>No history available.</p>`;
