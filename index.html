@@ -1,9 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YHA Coder Leaderboard</title>
+    <title>Enhanced YHA Coder Leaderboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -20,6 +21,8 @@
             --dark-bg: #2b1a0d;
             --darker-bg: #3b261b;
             --ripple-color: rgba(255, 98, 0, 0.4);
+            --light-bg-start: #f0f4f8;
+            --light-bg-end: #d9e2ec;
         }
 
         body {
@@ -45,12 +48,14 @@
         }
 
         body.light-mode {
-            background: linear-gradient(135deg, #f5f6f5 0%, #e5e5e5 100%);
+            background: radial-gradient(circle at 50% 50%, var(--light-bg-start), var(--light-bg-end));
             color: #333333;
+            animation: liquid-bg 12s ease-in-out infinite;
         }
 
         .light-mode .background-parallax {
-            background-image: linear-gradient(135deg, #f5f6f5 0%, #e5e5e5 100%);
+            background: radial-gradient(circle at 50% 50%, var(--light-bg-start), var(--light-bg-end));
+            animation: liquid-bg 12s ease-in-out infinite;
         }
 
         .leaderboard {
@@ -66,12 +71,56 @@
             transition: all 0.3s ease;
             position: relative;
             z-index: 2;
+            overflow: hidden;
         }
 
         .light-mode .leaderboard {
-            background: rgba(255, 255, 255, 0.75);
-            border-color: rgba(0, 0, 0, 0.15);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(20px) saturate(220%);
+            -webkit-backdrop-filter: blur(20px) saturate(220%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(255, 255, 255, 0.3);
+            position: relative;
+        }
+
+        .leaderboard::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.2) 50%,
+                transparent
+            );
+            z-index: -1;
+            opacity: 0.5;
+            transition: transform 0.5s ease;
+            transform: translateX(-100%);
+        }
+
+        .light-mode .leaderboard:hover::before {
+            transform: translateX(100%);
+        }
+
+        .light-mode .leaderboard::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.4), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .light-mode .leaderboard:hover::after {
+            opacity: 0.3;
         }
 
         h2 {
@@ -90,7 +139,7 @@
 
         .light-mode h2 {
             color: var(--light-orange);
-            text-shadow: none;
+            text-shadow: 0 0 4px rgba(255, 98, 0, 0.3);
         }
 
         .table {
@@ -115,6 +164,11 @@
             transition: transform 0.2s ease;
         }
 
+        .light-mode thead th {
+            background: linear-gradient(90deg, rgba(255, 98, 0, 0.8), rgba(255, 140, 0, 0.8));
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
         thead th:hover {
             transform: translateY(-1px);
         }
@@ -133,13 +187,21 @@
         }
 
         .light-mode tbody tr {
-            background: rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(15px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         tbody tr:hover {
             background: rgba(255, 98, 0, 0.2);
             transform: translateY(-2px);
             box-shadow: 0 6px 20px var(--shadow-color);
+        }
+
+        .light-mode tbody tr:hover {
+            background: rgba(255, 98, 0, 0.15);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(255, 255, 255, 0.3);
         }
 
         td {
@@ -162,6 +224,10 @@
             animation: pulse 2s ease-in-out infinite;
             position: relative;
             overflow: hidden;
+        }
+
+        .light-mode .rank-badge {
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(255, 255, 255, 0.5);
         }
 
         .rank-badge:hover::after {
@@ -217,6 +283,10 @@
             font-style: normal;
         }
 
+        .light-mode .achievements {
+            color: #444;
+        }
+
         .badge {
             display: inline-block;
             margin: 4px;
@@ -228,6 +298,11 @@
             backdrop-filter: blur(6px);
             transition: transform 0.2s ease;
             position: relative;
+        }
+
+        .light-mode .badge {
+            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
 
         .badge:hover {
@@ -257,6 +332,12 @@
             z-index: 100;
         }
 
+        .light-mode .badge[data-tooltip]::after {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
         .badge:hover::after {
             opacity: 1;
             visibility: visible;
@@ -270,6 +351,10 @@
             max-width: 240px;
             margin: 0 auto;
             overflow: hidden;
+        }
+
+        .light-mode .progress {
+            background: rgba(0, 0, 0, 0.1);
         }
 
         .progress-bar {
@@ -299,10 +384,18 @@
             font-weight: 600;
         }
 
+        .light-mode .btn-orange {
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(255, 255, 255, 0.4);
+        }
+
         .btn-orange:hover {
             transform: scale(1.05);
             box-shadow: 0 6px 16px var(--shadow-color);
             filter: brightness(1.15);
+        }
+
+        .light-mode .btn-orange:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(255, 255, 255, 0.5);
         }
 
         .btn-orange:active {
@@ -334,6 +427,13 @@
             transition: all 0.3s ease;
         }
 
+        .light-mode .search-box .input-group-text {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(15px);
+            color: #333333;
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
         .search-box .form-control {
             background: var(--glass-bg);
             color: var(--text-color);
@@ -344,11 +444,11 @@
             padding-right: 30px;
         }
 
-        .light-mode .search-box .input-group-text,
         .light-mode .search-box .form-control {
-            background: rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(15px);
             color: #333333;
-            border-color: rgba(0, 0, 0, 0.15);
+            border-color: rgba(255, 255, 255, 0.5);
         }
 
         .search-clear {
@@ -400,10 +500,11 @@
 
         .light-mode .table-responsive::-webkit-scrollbar-thumb {
             background: var(--light-orange);
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
         }
 
         .light-mode .table-responsive::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.2);
         }
 
         /* Modal Chart Fixes */
@@ -427,12 +528,18 @@
         }
 
         .light-mode .modal-content {
-            background: rgba(255, 255, 255, 0.75);
-            border-color: rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(14px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(255, 255, 255, 0.4);
         }
 
         .modal-header, .modal-footer {
             border-color: var(--glass-border);
+        }
+
+        .light-mode .modal-header, .light-mode .modal-footer {
+            border-color: rgba(255, 255, 255, 0.5);
         }
 
         .modal-title {
@@ -476,9 +583,15 @@
             transition: transform 0.5s ease-out, opacity 0.5s ease-out;
         }
 
+        .light-mode .ripple::after {
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
         .ripple:active::after {
             transform: scale(2);
             opacity: 0;
+            animation: liquid-ripple 0.6s ease-out;
         }
 
         /* Apply ripple effect to interactive elements */
@@ -565,10 +678,19 @@
                 animation: reveal 0.6s ease-out forwards;
             }
 
+            .light-mode tr {
+                background: rgba(255, 255, 255, 0.25);
+                backdrop-filter: blur(15px) saturate(200%);
+            }
+
             td {
                 padding: 12px;
                 position: relative;
                 border-bottom: 1px solid var(--glass-border);
+            }
+
+            .light-mode td {
+                border-bottom: 1px solid rgba(255, 255, 255, 0.5);
             }
 
             td::before {
@@ -625,6 +747,18 @@
         @keyframes shine {
             from { transform: translateX(-100%) rotate(45deg); }
             to { transform: translateX(100%) rotate(45deg); }
+        }
+
+        @keyframes liquid-bg {
+            0% { background-position: 50% 50%; }
+            50% { background-position: 70% 30%; }
+            100% { background-position: 50% 50%; }
+        }
+
+        @keyframes liquid-ripple {
+            0% { transform: scale(0); opacity: 0.6; }
+            50% { transform: scale(1.5); opacity: 0.3; }
+            100% { transform: scale(2); opacity: 0; }
         }
 
         @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
@@ -808,7 +942,7 @@
                 ripple.style.left = `${x}px`;
                 ripple.style.top = `${y}px`;
                 ripple.style.position = 'absolute';
-                ripple.style.background = 'var(--ripple-color)';
+                ripple.style.background = document.body.classList.contains('light-mode') ? 'rgba(255, 255, 255, 0.5)' : 'var(--ripple-color)';
                 ripple.style.borderRadius = '50%';
                 ripple.style.width = `${size}px`;
                 ripple.style.height = `${size}px`;
@@ -816,12 +950,15 @@
                 ripple.style.opacity = '0.6';
                 ripple.style.transition = 'transform 0.5s ease-out, opacity 0.5s ease-out';
                 ripple.style.pointerEvents = 'none';
+                if (document.body.classList.contains('light-mode')) {
+                    ripple.style.boxShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
+                }
                 this.appendChild(ripple);
                 setTimeout(() => {
                     ripple.style.transform = 'scale(2)';
                     ripple.style.opacity = '0';
                 }, 0);
-                setTimeout(() => ripple.remove(), 500);
+                setTimeout(() => ripple.remove(), 600);
             });
         });
     }
@@ -1058,33 +1195,35 @@
                         title: {
                             display: true,
                             text: xTitle,
-                            color: '#fff',
+                            color: document.body.classList.contains('light-mode') ? '#333' : '#fff',
                             font: { weight: '600' }
                         },
-                        ticks: { color: '#fff', font: { size: 12 } },
-                        grid: { color: 'rgba(255, 255, 255, 0.15)' }
+                        ticks: { color: document.body.classList.contains('light-mode') ? '#333' : '#fff', font: { size: 12 } },
+                        grid: { color: document.body.classList.contains('light-mode') ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.15)' }
                     },
                     y: {
                         title: {
                             display: true,
                             text: yTitle,
-                            color: '#fff',
+                            color: document.body.classList.contains('light-mode') ? '#333' : '#fff',
                             font: { weight: '600' }
                         },
-                        ticks: { color: '#fff', font: { size: 12 } },
-                        grid: { color: 'rgba(255, 255, 255, 0.15)' },
+                        ticks: { color: document.body.classList.contains('light-mode') ? '#333' : '#fff', font: { size: 12 } },
+                        grid: { color: document.body.classList.contains('light-mode') ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.15)' },
                         suggestedMin: Math.min(...data, 0) * 1.2,
                         suggestedMax: Math.max(...data, 0) * 1.2
                     }
                 },
                 plugins: {
                     legend: {
-                        labels: { color: '#fff', font: { size: 14 } }
+                        labels: { color: document.body.classList.contains('light-mode') ? '#333' : '#fff', font: { size: 14 } }
                     },
                     tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        backgroundColor: document.body.classList.contains('light-mode') ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
                         titleFont: { size: 14 },
                         bodyFont: { size: 12 },
+                        titleColor: document.body.classList.contains('light-mode') ? '#333' : '#fff',
+                        bodyColor: document.body.classList.contains('light-mode') ? '#333' : '#fff',
                         callbacks: {
                             label: function(context) {
                                 let label = context.dataset.label || '';
