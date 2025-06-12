@@ -12,176 +12,228 @@
             --primary-orange: #ff6200;
             --light-orange: #ff8c00;
             --gold: #ffd700;
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --text-color: #ffffff;
+            --text-secondary: #e0e0e0;
+            --shadow-color: rgba(0, 0, 0, 0.3);
             --dark-bg: #2b1a0d;
             --darker-bg: #3b261b;
+            --ripple-color: rgba(255, 98, 0, 0.4);
         }
 
         body {
-            background: radial-gradient(circle at center, var(--dark-bg) 0%, var(--darker-bg) 100%);
-            font-family: 'Orbitron', sans-serif;
-            color: #ffffff;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            color: var(--text-color);
             margin: 0;
             padding: 0;
             overflow-x: hidden;
+            position: relative;
         }
 
-        body.light-mode {
-            background: radial-gradient(circle at center, #f5f5f5 0%, #e0e0e0 100%);
-            color: #333;
-        }
-
-        .leaderboard {
-            max-width: 100%;
-            margin: clamp(10px, 3vw, 30px) auto;
-            background: rgba(61, 33, 20, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: clamp(15px, 3vw, 25px);
-            border: 2px solid var(--primary-orange);
-            box-shadow: 0 0 25px rgba(255, 98, 0, 0.3);
-        }
-
-        .light-mode .leaderboard {
-            background: rgba(255, 255, 255, 0.9);
-            border-color: var(--light-orange);
-            box-shadow: 0 0 25px rgba(255, 140, 0, 0.2);
-        }
-
-        .leaderboard::before {
-            content: '';
-            position: absolute;
+        .background-parallax {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 2px;
-            background: rgba(255, 98, 0, 0.5);
-            animation: scanline 8s linear infinite;
+            height: 100%;
+            z-index: 0;
+            transform: translateZ(0);
+            background-image: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+            transition: transform 0.1s ease-out;
+        }
+
+        body.light-mode {
+            background: linear-gradient(135deg, #f5f6f5 0%, #e5e5e5 100%);
+            color: #333333;
+        }
+
+        .light-mode .background-parallax {
+            background-image: linear-gradient(135deg, #f5f6f5 0%, #e5e5e5 100%);
+        }
+
+        .leaderboard {
+            max-width: 95%;
+            margin: clamp(20px, 4vw, 40px) auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(14px) saturate(200%);
+            -webkit-backdrop-filter: blur(14px) saturate(200%);
+            border-radius: 24px;
+            padding: clamp(20px, 3vw, 30px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 40px var(--shadow-color);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .light-mode .leaderboard {
+            background: rgba(255, 255, 255, 0.75);
+            border-color: rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         }
 
         h2 {
             text-align: center;
             color: var(--primary-orange);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: clamp(1.2rem, 4vw, 2.5rem);
-            text-shadow: 0 0 10px rgba(255, 98, 0, 0.7);
-            margin-bottom: clamp(15px, 2vw, 30px);
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            margin-bottom: clamp(20px, 3vw, 35px);
+            text-shadow: 0 0 10px rgba(255, 98, 0, 0.4);
+            position: relative;
+            z-index: 3;
+            transform: translateY(0);
+            transition: transform 0.5s ease-out;
         }
 
         .light-mode h2 {
             color: var(--light-orange);
-            text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+            text-shadow: none;
         }
 
         .table {
             width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 0;
+            border-collapse: separate;
+            border-spacing: 0 10px;
         }
 
         thead th {
             background: linear-gradient(90deg, var(--primary-orange), var(--light-orange));
             color: #fff;
-            padding: clamp(8px, 1.5vw, 12px);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border: none;
-            font-size: clamp(0.7rem, 1.5vw, 1rem);
+            padding: clamp(12px, 2vw, 16px);
+            font-weight: 600;
+            font-size: clamp(0.9rem, 1.6vw, 1.2rem);
+            border-radius: 12px;
             position: sticky;
             top: 0;
             z-index: 10;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        thead th:hover {
+            transform: translateY(-1px);
         }
 
         tbody tr {
-            background: rgba(255, 255, 255, 0.05);
-            border-bottom: 1px solid rgba(255, 98, 0, 0.2);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px) saturate(180%);
+            -webkit-backdrop-filter: blur(10px) saturate(180%);
+            border-radius: 14px;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            transform: translateY(0);
+            opacity: 0;
+            animation: reveal 0.6s ease-out forwards;
         }
 
         .light-mode tbody tr {
-            background: rgba(0, 0, 0, 0.05);
-            border-bottom: 1px solid rgba(255, 140, 0, 0.2);
+            background: rgba(255, 255, 255, 0.75);
         }
 
         tbody tr:hover {
             background: rgba(255, 98, 0, 0.2);
-            transform: scale(1.01);
-            box-shadow: 0 0 10px rgba(255, 98, 0, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--shadow-color);
         }
 
         td {
-            padding: clamp(6px, 1.5vw, 20px);
+            padding: clamp(12px, 2vw, 16px);
             vertical-align: middle;
-            font-size: clamp(0.7rem, 1.5vw, 1rem);
+            font-size: clamp(0.9rem, 1.6vw, 1.1rem);
         }
 
         .rank-badge {
-            background: linear-gradient(45deg, orange, var(--primary-orange));
+            background: linear-gradient(45deg, var(--primary-orange), var(--light-orange));
             color: #fff;
             border-radius: 50%;
-            width: clamp(25px, 4vw, 40px);
-            height: clamp(25px, 4vw, 40px);
+            width: clamp(32px, 4vw, 48px);
+            height: clamp(32px, 4vw, 48px);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(255, 98, 0, 0.5);
-            animation: glow 1.5s infinite alternate;
+            font-weight: 700;
+            box-shadow: 0 3px 10px var(--shadow-color);
+            animation: pulse 2s ease-in-out infinite;
         }
 
         .name {
             color: var(--light-orange);
             font-weight: 600;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: color 0.2s ease;
+        }
+
+        .name:hover {
+            color: var(--primary-orange);
+        }
+
+        .light-mode .name {
+            color: #333333;
+        }
+
+        .light-mode .name:hover {
+            color: var(--light-orange);
         }
 
         .points {
             color: var(--gold);
-            font-weight: bold;
+            font-weight: 700;
         }
 
         .averages {
-            color: #ffab40;
-            font-weight: bold;
+            color: var(--light-orange);
+            font-weight: 600;
         }
 
         .achievements {
-            color: #ffab40;
-            font-style: italic;
+            color: var(--text-secondary);
+            font-style: normal;
         }
 
         .badge {
             display: inline-block;
-            margin: 2px;
-            padding: 3px 6px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            color: white;
+            margin: 4px;
+            padding: 5px 10px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+            backdrop-filter: blur(6px);
+            transition: transform 0.2s ease;
         }
 
-        .badge-gold { background: linear-gradient(45deg, #FFD700, #FFA500); }
-        .badge-silver { background: linear-gradient(45deg, #C0C0C0, #A0A0A0); }
-        .badge-bronze { background: linear-gradient(45deg, #CD7F32, #A0522D); }
+        .badge:hover {
+            transform: scale(1.05);
+        }
+
+        .badge-gold { background: linear-gradient(45deg, #ffd700, #ffaa00); }
+        .badge-silver { background: linear-gradient(45deg, #d0d0d0, #a0a0a0); }
+        .badge-bronze { background: linear-gradient(45deg, #cd7f32, #a0522d); }
         .badge-blue { background: linear-gradient(45deg, #3498db, #2980b9); }
 
         .progress {
-            height: clamp(12px, 1.5vw, 16px);
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
+            height: clamp(16px, 1.8vw, 20px);
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
             width: 100%;
-            max-width: 200px;
+            max-width: 240px;
             margin: 0 auto;
             overflow: hidden;
         }
 
         .progress-bar {
-            background: linear-gradient(90deg, var(--light-orange), var(--primary-orange));
-            border-radius: 8px;
-            font-size: clamp(0.6rem, 1vw, 0.8rem);
-            transition: width 0.3s ease;
+            background: linear-gradient(90deg, var(--primary-orange), var(--light-orange));
+            border-radius: 12px;
+            font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+            transition: width 0.5s ease-in-out;
         }
 
         .points-container {
@@ -189,67 +241,80 @@
             flex-direction: row;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 14px;
         }
 
         .btn-orange {
             background: linear-gradient(90deg, var(--primary-orange), var(--light-orange));
-            color: white;
+            color: #fff;
             border: none;
+            border-radius: 14px;
+            padding: clamp(10px, 1.5vw, 14px);
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-weight: 600;
         }
 
         .btn-orange:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 98, 0, 0.4);
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px var(--shadow-color);
+            filter: brightness(1.15);
+        }
+
+        .btn-orange:active {
+            animation: spring 0.4s ease-out;
         }
 
         .btn-orange.active {
             background: linear-gradient(90deg, var(--light-orange), var(--primary-orange));
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.25);
         }
 
         .search-box .input-group-text {
-            background: #1a1a1a;
-            color: #fff;
-            border: 1px solid var(--primary-orange);
+            background: var(--glass-bg);
+            color: var(--text-color);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px 0 0 12px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
 
         .search-box .form-control {
-            background: #1a1a1a;
-            color: #fff;
-            border: 1px solid var(--primary-orange);
+            background: var(--glass-bg);
+            color: var(--text-color);
+            border: 1px solid var(--glass-border);
+            border-radius: 0 12px 12px 0;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
 
-        .light-mode .search-box .input-group-text {
-            background: #fff;
-            color: #333;
-            border: 1px solid var(--light-orange);
-        }
-
+        .light-mode .search-box .input-group-text,
         .light-mode .search-box .form-control {
-            background: #fff;
-            color: #333;
-            border: 1px solid var(--light-orange);
+            background: rgba(255, 255, 255, 0.75);
+            color: #333333;
+            border-color: rgba(0, 0, 0, 0.15);
         }
 
         .table-responsive {
             max-height: 70vh;
             overflow-y: auto;
             overflow-x: hidden;
+            position: relative;
+            z-index: 2;
         }
 
         .table-responsive::-webkit-scrollbar {
-            width: 8px;
+            width: 12px;
         }
 
         .table-responsive::-webkit-scrollbar-thumb {
             background: var(--primary-orange);
-            border-radius: 4px;
+            border-radius: 6px;
         }
 
         .table-responsive::-webkit-scrollbar-track {
-            background: rgba(255, 98, 0, 0.1);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .light-mode .table-responsive::-webkit-scrollbar-thumb {
@@ -257,31 +322,97 @@
         }
 
         .light-mode .table-responsive::-webkit-scrollbar-track {
-            background: rgba(255, 140, 0, 0.1);
+            background: rgba(0, 0, 0, 0.1);
         }
 
         /* Modal Chart Fixes */
         #points-history {
-            height: 340px;
-            padding-bottom: 10px;
+            height: 360px;
+            padding-bottom: 12px;
         }
 
         #pointsChart {
             width: 100% !important;
-            height: 300px !important;
+            height: 320px !important;
+        }
+
+        .modal-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(14px) saturate(200%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px var(--shadow-color);
+            animation: popIn 0.4s ease-out;
+        }
+
+        .light-mode .modal-content {
+            background: rgba(255, 255, 255, 0.75);
+            border-color: rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header, .modal-footer {
+            border-color: var(--glass-border);
+        }
+
+        .modal-title {
+            color: var(--primary-orange);
+            font-weight: 700;
+        }
+
+        .light-mode .modal-title {
+            color: var(--light-orange);
         }
 
         .modal-body {
-            padding: 15px;
+            padding: 24px;
+        }
+
+        .modal-body > div {
+            animation: popIn 0.5s ease-out;
+            animation-delay: 0.1s;
+            animation-fill-mode: backwards;
         }
 
         .modal-dialog {
-            max-width: 800px;
+            max-width: 850px;
+        }
+
+        /* Ripple Effect */
+        .ripple {
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .ripple::after {
+            content: '';
+            position: absolute;
+            background: var(--ripple-color);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: scale(0);
+            opacity: 0.6;
+            transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+        }
+
+        .ripple:active::after {
+            transform: scale(2);
+            opacity: 0;
+        }
+
+        /* Apply ripple effect to interactive elements */
+        .btn-orange, .name, thead th, tbody tr, .btn-close {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-close:active {
+            animation: spring 0.4s ease-out;
         }
 
         @media (min-width: 769px) {
             .leaderboard {
-                max-width: 95%;
+                max-width: 90%;
             }
         }
 
@@ -299,7 +430,7 @@
 
             .d-flex {
                 flex-direction: column;
-                gap: 10px;
+                gap: 14px;
                 align-items: stretch;
             }
 
@@ -307,13 +438,13 @@
                 width: 100%;
                 display: flex;
                 justify-content: space-between;
-                gap: 5px;
+                gap: 10px;
             }
 
             .btn {
                 flex: 1;
-                padding: clamp(5px, 1vw, 10px);
-                font-size: clamp(0.7rem, 1.5vw, 1rem);
+                padding: clamp(8px, 1.2vw, 14px);
+                font-size: clamp(0.9rem, 1.6vw, 1.1rem);
             }
 
             .progress {
@@ -321,11 +452,11 @@
             }
 
             #points-history {
-                height: 300px;
+                height: 320px;
             }
 
             #pointsChart {
-                height: 260px !important;
+                height: 280px !important;
             }
         }
 
@@ -345,24 +476,25 @@
             }
 
             tr {
-                margin-bottom: 15px;
-                padding: 10px;
-                background: rgba(255, 255, 255, 0.1);
-                border-radius: 8px;
-                animation: fadeIn 0.5s ease forwards;
+                margin-bottom: 18px;
+                padding: 14px;
+                background: var(--glass-bg);
+                backdrop-filter: blur(10px) saturate(180%);
+                border-radius: 14px;
+                animation: reveal 0.6s ease-out forwards;
             }
 
             td {
-                padding: 8px;
+                padding: 12px;
                 position: relative;
-                border-bottom: 1px solid rgba(255, 98, 0, 0.2);
+                border-bottom: 1px solid var(--glass-border);
             }
 
             td::before {
                 content: attr(data-label);
-                font-weight: bold;
+                font-weight: 600;
                 display: block;
-                margin-bottom: 5px;
+                margin-bottom: 8px;
                 color: var(--light-orange);
             }
 
@@ -371,11 +503,11 @@
             }
 
             .achievements .badge {
-                color: white;
+                color: #fff;
             }
 
             .light-mode .achievements {
-                color: #e67e22;
+                color: #333333;
             }
 
             .points-container {
@@ -388,42 +520,49 @@
             }
         }
 
-        @keyframes scanline {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 6px var(--shadow-color); }
+            100% { box-shadow: 0 0 14px var(--shadow-color); }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+        @keyframes reveal {
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes glow {
-            from { box-shadow: 0 0 5px rgba(255, 98, 0, 0.5); }
-            to { box-shadow: 0 0 15px rgba(255, 98, 0, 0.8); }
+        @keyframes spring {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.85); }
+            100% { transform: scale(1); }
         }
 
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
     </style>
 </head>
 <body>
+<div class="background-parallax"></div>
 <div class="leaderboard">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0"><i class="fa-solid fa-terminal"></i> YHA Coder Leaderboard</h2>
         <div class="btn-group">
-            <button id="theme-toggle" class="btn btn-sm btn-orange" title="Toggle theme">
+            <button id="theme-toggle" class="btn btn-sm btn-orange ripple" title="Toggle theme">
                 <i class="fas fa-moon"></i>
             </button>
-            <button id="refresh-btn" class="btn btn-sm btn-orange" title="Refresh data">
+            <button id="refresh-btn" class="btn btn-sm btn-orange ripple" title="Refresh data">
                 <i class="fas fa-sync-alt"></i>
             </button>
-            <button id="export-btn" class="btn btn-sm btn-success" title="Export to CSV">
+            <button id="export-btn" class="btn btn-sm btn-success ripple" title="Export to CSV">
                 <i class="fas fa-file-export"></i>
             </button>
         </div>
     </div>
 
-    <div class="search-box mb-3">
+    <div class="search-box mb-4">
         <div class="input-group">
             <span class="input-group-text">
                 <i class="fas fa-search"></i>
@@ -437,11 +576,11 @@
         <table class="table text-center">
             <thead>
                 <tr>
-                    <th data-sort="rank">Rank <i class="fas fa-sort"></i></th>
-                    <th data-sort="name">Name <i class="fas fa-sort"></i></th>
-                    <th data-sort="points">Points <i class="fas fa-sort"></i></th>
-                    <th data-sort="averages">Averages <i class="fas fa-sort"></i></th>
-                    <th data-sort="achievements">Achievements <i class="fas fa-sort"></i></th>
+                    <th data-sort="rank" class="ripple">Rank <i class="fas fa-sort"></i></th>
+                    <th data-sort="name" class="ripple">Name <i class="fas fa-sort"></i></th>
+                    <th data-sort="points" class="ripple">Points <i class="fas fa-sort"></i></th>
+                    <th data-sort="averages" class="ripple">Averages <i class="fas fa-sort"></i></th>
+                    <th data-sort="achievements" class="ripple">Achievements <i class="fas fa-sort"></i></th>
                 </tr>
             </thead>
             <tbody id="leaderboard-body">
@@ -458,10 +597,10 @@
 <!-- User Profile Modal -->
 <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content bg-dark text-light">
+        <div class="modal-content">
             <div class="modal-header border-orange">
                 <h5 class="modal-title" id="userModalTitle">User Profile</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white ripple" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div id="user-details" class="text-center">
@@ -471,18 +610,18 @@
                 </div>
                 <!-- Points History Section -->
                 <div id="points-history" class="mt-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="text-orange" id="chart-title">Daily Points Change</h5>
                         <div class="btn-group">
-                            <button id="daily-btn" class="btn btn-sm btn-orange active" onclick="toggleChartView('daily')">Daily</button>
-                            <button id="weekly-btn" class="btn btn-sm btn-orange" onclick="toggleChartView('weekly')">Weekly</button>
+                            <button id="daily-btn" class="btn btn-sm btn-orange active ripple" onclick="toggleChartView('daily')">Daily</button>
+                            <button id="weekly-btn" class="btn btn-sm btn-orange ripple" onclick="toggleChartView('weekly')">Weekly</button>
                         </div>
                     </div>
                     <canvas id="pointsChart"></canvas>
                 </div>
             </div>
             <div class="modal-footer border-orange">
-                <button type="button" class="btn btn-orange" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-orange ripple" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -493,13 +632,14 @@
     let leaderboardData = [];
     let sortConfig = { column: 'rank', direction: 'asc' };
     const userModal = new bootstrap.Modal(document.getElementById('userModal'));
-    let currentChartView = 'daily'; // Default view
+    let currentChartView = 'daily';
 
     document.addEventListener('DOMContentLoaded', function() {
         initTheme();
         fetchLeaderboard();
         setInterval(fetchLeaderboard, 300000);
         setupEventListeners();
+        setupParallax();
     });
 
     function initTheme() {
@@ -509,6 +649,25 @@
             document.body.classList.add('light-mode');
             themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
         }
+    }
+
+    function setupParallax() {
+        const parallaxBg = document.querySelector('.background-parallax');
+        const header = document.querySelector('h2');
+        const tableRows = document.querySelectorAll('tbody tr');
+
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            // Background parallax
+            parallaxBg.style.transform = `translateY(${scrollY * 0.3}px)`;
+            // Header parallax
+            header.style.transform = `translateY(${scrollY * 0.1}px)`;
+            // Table rows parallax
+            tableRows.forEach((row, index) => {
+                const offset = (index % 2 === 0 ? 1 : -1) * scrollY * 0.05;
+                row.style.transform = `translateY(${offset}px)`;
+            });
+        });
     }
 
     function setupEventListeners() {
@@ -523,6 +682,34 @@
         
         document.getElementById('leaderboard-body').addEventListener('click', function(e) {
             if (e.target.classList.contains('name')) showUserModal(e.target.textContent);
+        });
+
+        // Add ripple effect
+        document.querySelectorAll('.ripple').forEach(element => {
+            element.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const size = Math.max(rect.width, rect.height);
+                const ripple = document.createElement('span');
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                ripple.style.position = 'absolute';
+                ripple.style.background = 'var(--ripple-color)';
+                ripple.style.borderRadius = '50%';
+                ripple.style.width = `${size}px`;
+                ripple.style.height = `${size}px`;
+                ripple.style.transform = 'scale(0)';
+                ripple.style.opacity = '0.6';
+                ripple.style.transition = 'transform 0.5s ease-out, opacity 0.5s ease-out';
+                ripple.style.pointerEvents = 'none';
+                this.appendChild(ripple);
+                setTimeout(() => {
+                    ripple.style.transform = 'scale(2)';
+                    ripple.style.opacity = '0';
+                }, 0);
+                setTimeout(() => ripple.remove(), 500);
+            });
         });
     }
 
@@ -544,7 +731,7 @@
                     </div>
                 </td></tr>`;
             
-            const response = await fetch("https://script.google.com/macros/s/AKfycbyVAV8QIzzphbtZZGPK7-qfKpwbcEjGcuYwmSSZ6Qydg2slaMAQ6N2lUChYZhL12b6_3Q/exec");
+            const response = await fetch("https://script.google.com/macros/s/AKfycbxt5KmpSzf6NZoiE10_yk_OtkyJ-O0uUXiGvqLXz1LBeixFL6ZIpGrRyvBed-JdVFwhjQ/exec");
             if (!response.ok) throw new Error('Network response was not ok');
             
             leaderboardData = await response.json();
@@ -552,7 +739,7 @@
         } catch (error) {
             document.getElementById('leaderboard-body').innerHTML = `
                 <tr><td colspan="5" class="text-center text-danger">
-                    Failed to load data. <button class="btn btn-sm btn-orange mt-2" onclick="fetchLeaderboard()">
+                    Failed to load data. <button class="btn btn-sm btn-orange mt-2 ripple" onclick="fetchLeaderboard()">
                         <i class="fas fa-sync-alt"></i> Retry
                     </button>
                 </td></tr>`;
@@ -568,9 +755,9 @@
             const maxPoints = Math.max(...data.map(p => parseInt(p.points))) || 100;
             const pointsPercentage = (parseInt(player.points) / maxPoints) * 100;
             
-            html += `<tr style="animation-delay: ${animationDelay}">
+            html += `<tr style="animation-delay: ${animationDelay}" class="ripple">
                 <td data-label="Rank"><span class="rank-badge">${player.rank}</span></td>
-                <td data-label="Name"><span class="name">${player.name}</span></td>
+                <td data-label="Name"><span class="name ripple">${player.name}</span></td>
                 <td data-label="Points">
                     <div class="points-container">
                         <span class="points me-2">${player.points}</span>
@@ -584,6 +771,7 @@
             </tr>`;
         });
         document.getElementById('leaderboard-body').innerHTML = html;
+        setupParallax(); // Re-apply parallax to new rows
     }
 
     function formatAchievements(achievements) {
@@ -637,34 +825,33 @@
         
         document.getElementById('userModalTitle').textContent = `${userName}'s Profile`;
         const userDetails = `
-            <div class="mb-3">
-                <div class="rank-badge mx-auto mb-2" style="width: 60px; height: 60px; font-size: 1.5rem;">${user.rank}</div>
+            <div class="mb-4">
+                <div class="rank-badge mx-auto mb-3" style="width: 64px; height: 64px; font-size: 1.6rem;">${user.rank}</div>
                 <h4 class="text-orange">${userName}</h4>
             </div>
             <div class="row text-start">
-                <div class="col-md-6 mb-2">
+                <div class="col-md-6 mb-3">
                     <strong><i class="fas fa-star me-2"></i>Points:</strong> 
                     <span class="points">${user.points}</span>
                 </div>
-                <div class="col-md-6 mb-2">
+                <div class="col-md-6 mb-3">
                     <strong><i class="fas fa-percentage me-2"></i>Averages:</strong> 
                     <span class="averages">${user.averages}%</span>
                 </div>
-                <div class="col-md-6 mb-2">
+                <div class="col-md-6 mb-3">
                     <strong><i class="fas fa-trophy me-2"></i>Achievements:</strong>
-                    <div class="mt-1">${formatAchievements(user.achievements)}</div>
+                    <div class="mt-2">${formatAchievements(user.achievements)}</div>
                 </div>
             </div>
-            <div class="mt-3">
+            <div class="mt-4">
                 <h5 class="text-orange">Progress</h5>
-                <div class="progress mb-2" style="height: 25px;">
+                <div class="progress mb-3" style="height: 28px;">
                     <div class="progress-bar" style="width: ${(parseInt(user.points) / 100) * 100}%">${user.points}</div>
                 </div>
             </div>`;
         
         document.getElementById('user-details').innerHTML = userDetails;
         
-        // Render Points History Chart with default view (daily)
         currentChartView = 'daily';
         renderPointsHistoryChart(user);
         updateChartButtons();
@@ -695,11 +882,11 @@
 
         if (!history.length) {
             document.getElementById('points-history').innerHTML = `
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="text-orange" id="chart-title">Points History</h5>
                     <div class="btn-group">
-                        <button id="daily-btn" class="btn btn-sm btn-orange active" onclick="toggleChartView('daily')">Daily</button>
-                        <button id="weekly-btn" class="btn btn-sm btn-orange" onclick="toggleChartView('weekly')">Weekly</button>
+                        <button id="daily-btn" class="btn btn-sm btn-orange active ripple" onclick="toggleChartView('daily')">Daily</button>
+                        <button id="weekly-btn" class="btn btn-sm btn-orange ripple" onclick="toggleChartView('weekly')">Weekly</button>
                     </div>
                 </div>
                 <p>No history available.</p>`;
@@ -731,7 +918,7 @@
         }
 
         window.pointsChartInstance = new Chart(ctx, {
-            type: 'bar', // Changed to Bar Chart
+            type: 'bar',
             data: {
                 labels: labels,
                 datasets: [{
@@ -739,7 +926,8 @@
                     data: data,
                     backgroundColor: data.map(value => value >= 0 ? 'rgba(255, 98, 0, 0.6)' : 'rgba(255, 0, 0, 0.6)'),
                     borderColor: data.map(value => value >= 0 ? 'rgba(255, 98, 0, 1)' : 'rgba(255, 0, 0, 1)'),
-                    borderWidth: 1
+                    borderWidth: 1,
+                    borderRadius: 8
                 }]
             },
             options: {
@@ -750,28 +938,33 @@
                         title: {
                             display: true,
                             text: xTitle,
-                            color: '#fff'
+                            color: '#fff',
+                            font: { weight: '600' }
                         },
-                        ticks: { color: '#fff' },
-                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        ticks: { color: '#fff', font: { size: 12 } },
+                        grid: { color: 'rgba(255, 255, 255, 0.15)' }
                     },
                     y: {
                         title: {
                             display: true,
                             text: yTitle,
-                            color: '#fff'
+                            color: '#fff',
+                            font: { weight: '600' }
                         },
-                        ticks: { color: '#fff' },
-                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: { color: '#fff', font: { size: 12 } },
+                        grid: { color: 'rgba(255, 255, 255, 0.15)' },
                         suggestedMin: Math.min(...data, 0) * 1.2,
                         suggestedMax: Math.max(...data, 0) * 1.2
                     }
                 },
                 plugins: {
                     legend: {
-                        labels: { color: '#fff' }
+                        labels: { color: '#fff', font: { size: 14 } }
                     },
                     tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleFont: { size: 14 },
+                        bodyFont: { size: 12 },
                         callbacks: {
                             label: function(context) {
                                 let label = context.dataset.label || '';
@@ -784,6 +977,9 @@
                             }
                         }
                     }
+                },
+                animation: {
+                    duration: 150
                 }
             }
         });
@@ -795,7 +991,7 @@
         const csvRows = [headers.join(',')];
         
         leaderboardData.forEach(user => {
-            csvRows.push([user.rank, `"${user.name}"`, user.points, `"${user.averages}%"`, `"${user.achievements || ''}"`].join(','));
+            csvRows.push([user.rank, `"${user.name}"`, user.points, `"${user.averages}"`, `"${user.achievements || ''}"`].join(','));
         });
         
         const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
